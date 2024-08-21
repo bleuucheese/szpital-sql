@@ -1,0 +1,187 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Patient {
+  id         Int      @id @default(autoincrement())
+  first_name String
+  last_name  String
+  dob        DateTime
+  gender     String
+  blood_type String
+  cid        String
+
+  insurance         Insurance?
+  addresse          Address?
+  alleries          Allergy[]
+  appoinments       Appointment[]
+  treatment_history TreatmentHistory[]
+  billings          Billing[]
+}
+
+model Insurance {
+  code         String
+  expired_date DateTime
+  patient      Patient  @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  patient_id   Int      @unique
+}
+
+model Address {
+  id         Int     @id @default(autoincrement())
+  street     String
+  city       String
+  district   String
+  ward       String
+  patient    Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  patient_id Int     @unique
+}
+
+model Allergy {
+  id       Int       @id @default(autoincrement())
+  allergen String
+  symptoms String
+  category String
+  patient  Patient[]
+}
+
+model Appointment {
+  id         Int      @id @default(autoincrement())
+  purpose    String
+  status     String
+  start_time DateTime
+  end_time   DateTime
+  patient    Patient? @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  patient_id Int?
+  staff      Staff?   @relation(fields: [staff_id], references: [id], onDelete: Cascade)
+  staff_id   Int?
+}
+
+model Staff {
+  id         Int      @id @default(autoincrement())
+  first_name String
+  last_name  String
+  dob        DateTime
+  job_type   String
+  salary     Float
+  manager    Staff?   @relation("direct_manager", fields: [manager_id], references: [id])
+  manager_id Int? // This field should be nullable to accommodate staff without a manager
+
+  employees         Staff[]             @relation("direct_manager")
+  qualifications    Qualification[]
+  shifts            Shift[]
+  department        Department?         @relation("works_in", fields: [department_id], references: [id])
+  department_id     Int?
+  manage_department Department?         @relation("manager")
+  employee_history  EmploymentHistory[]
+  appointments      Appointment[]
+  procedures        Procedure[]
+}
+
+model Qualification {
+  id          Int      @id @default(autoincrement())
+  name        String
+  provider    String
+  issued_date DateTime
+  staff       Staff?   @relation(fields: [staff_id], references: [id], onDelete: Cascade)
+  staff_id    Int?
+}
+
+model Shift {
+  id          Int      @id @default(autoincrement())
+  day_of_week String
+  start_hour  DateTime
+  end_hour    DateTime
+  staffs      Staff[]
+}
+
+model Department {
+  id         Int     @id @default(autoincrement())
+  name       String
+  staffs     Staff[] @relation("works_in")
+  manager    Staff   @relation("manager", fields: [manager_id], references: [id])
+  manager_id Int     @unique
+
+  previous_employment_histories EmploymentHistory[] @relation("prevDepartment")
+  current_employment_histories  EmploymentHistory[] @relation("curDepartment")
+}
+
+model EmploymentHistory {
+  id                     Int        @id @default(autoincrement())
+  date                   DateTime
+  previous_salary        Float
+  current_salary         Float
+  previous_job_title     String
+  current_job_title      String
+  previous_department    Department @relation("prevDepartment", fields: [previous_department_id], references: [id])
+  previous_department_id Int
+  current_department     Department @relation("curDepartment", fields: [current_department_id], references: [id])
+  current_department_id  Int
+  staff                  Staff?     @relation(fields: [staff_id], references: [id], onDelete: Cascade)
+  staff_id               Int?
+}
+
+model TreatmentHistory {
+  id           Int         @id @default(autoincrement())
+  type         String
+  diseases     String
+  visited_date DateTime
+  patient      Patient?    @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  patient_id   Int?
+  billing      Billing?
+  admissions   Admission[]
+}
+
+model Procedure {
+  id                Int       @id @default(autoincrement())
+  price             Float
+  category          String
+  medicine_quantity Int?
+  medicines         Medicine? @relation(fields: [medicine_id], references: [id], onDelete: Cascade)
+  medicine_id       Int?
+  staff             Staff?    @relation(fields: [staff_id], references: [id], onDelete: Cascade)
+  staff_id          Int?
+}
+
+model Medicine {
+  id          Int         @id @default(autoincrement())
+  name        String
+  price       Float
+  quantity    Int
+  effect      String
+  side_effect String
+  procedures  Procedure[]
+}
+
+model Billing {
+  id                   Int              @id @default(autoincrement())
+  amount               Float
+  billing_date         DateTime
+  due_date             DateTime
+  payment_status       String
+  treatment_history    TreatmentHistory @relation(fields: [treatment_history_id], references: [id], onDelete: Cascade)
+  treatment_history_id Int              @unique
+  patient              Patient?         @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  patient_id           Int?
+}
+
+model Admission {
+  id                   Int               @id @default(autoincrement())
+  status               String
+  admitted_date        DateTime
+  discharged_date      DateTime
+  room_type            String
+  price                Float
+  treatment_history    TreatmentHistory? @relation(fields: [treatment_history_id], references: [id], onDelete: Cascade)
+  treatment_history_id Int?
+}
