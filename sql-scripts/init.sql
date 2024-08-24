@@ -1,3 +1,5 @@
+create database test2408;
+use test2408;
 CREATE TABLE Allergy (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category VARCHAR(255) NOT NULL,
@@ -16,13 +18,6 @@ CREATE TABLE Address (
     ward VARCHAR(255) NOT NULL,
     district VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE Department (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    manager INT,
-    FOREIGN KEY (manager) REFERENCES Staff(id)
 );
 
 CREATE TABLE Patient (
@@ -66,6 +61,13 @@ CREATE TABLE Qualification (
     FOREIGN KEY (holder) REFERENCES Staff(id)
 );
 
+CREATE TABLE Department (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    manager INT,
+    FOREIGN KEY (manager) REFERENCES Staff(id)
+);
+
 CREATE TABLE EmploymentHistory (
     id INT AUTO_INCREMENT PRIMARY KEY,
     change_type VARCHAR(255) NOT NULL,
@@ -75,7 +77,7 @@ CREATE TABLE EmploymentHistory (
     new_salary DECIMAL(10, 2),
     prev_title VARCHAR(255),
     new_title VARCHAR(255),
-    applied_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    applied_date DATE NOT NULL DEFAULT (CURRENT_DATE),
     staff INT,
     FOREIGN KEY (prev_dept) REFERENCES Department(id),
     FOREIGN KEY (new_dept) REFERENCES Department(id),
@@ -228,4 +230,3 @@ INSERT INTO Allergy (allergen, symptoms, category) VALUES
 ('Glyceryl monothioglycolate', 'Eyelid dermatitis, permanent hair waving solutions', 'Contact'),
 ('Toluenesulfonamide formaldehyde', 'Eyelid dermatitis, nail polish', 'Contact'),
 ('Tennis ball felt waterproofing agent (Nano Titanium dioxide)', 'Weight gain in middle-aged subjects, physical contact in hypersensitive patients only', 'Contact');
-
