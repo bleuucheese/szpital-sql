@@ -18,6 +18,13 @@ CREATE TABLE Address (
     city VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE Department (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    manager INT,
+    FOREIGN KEY (manager) REFERENCES Staff(id)
+);
+
 CREATE TABLE Patient (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cid VARCHAR(50) NOT NULL,
@@ -69,17 +76,10 @@ CREATE TABLE EmploymentHistory (
     prev_title VARCHAR(255),
     new_title VARCHAR(255),
     applied_date DATE NOT NULL DEFAULT CURRENT_DATE,
-    staff_id INT,
+    staff INT,
     FOREIGN KEY (prev_dept) REFERENCES Department(id),
     FOREIGN KEY (new_dept) REFERENCES Department(id),
-    FOREIGN KEY (staff_id) REFERENCES Staff(id)
-);
-
-CREATE TABLE Department (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    manager INT,
-    FOREIGN KEY (manager) REFERENCES Staff(id)
+    FOREIGN KEY (staff) REFERENCES Staff(id)
 );
 
 CREATE TABLE Medicine (
@@ -103,14 +103,14 @@ CREATE TABLE Procedures (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category VARCHAR(255) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    performer_id INT,
-    patient_id INT,
-    medicine_id INT,
+    performer INT,
+    patient INT,
+    medicine INT,
     med_quantity INT,
     performed_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (performer_id) REFERENCES Staff(id),
-    FOREIGN KEY (patient_id) REFERENCES Patient(id),
-    FOREIGN KEY (medicine_id) REFERENCES Medicine(id)
+    FOREIGN KEY (performer) REFERENCES Staff(id),
+    FOREIGN KEY (patient) REFERENCES Patient(id),
+    FOREIGN KEY (medicine) REFERENCES Medicine(id)
 );
 
 CREATE TABLE TreatmentHistory (
@@ -118,10 +118,10 @@ CREATE TABLE TreatmentHistory (
     type VARCHAR(255) NOT NULL CHECK (type IN ('INPATIENT', 'OUTPATIENT')),
     diseases TEXT,
     visited_date DATE NOT NULL,
-    patient_id INT,
-    bill_id INT,
-    FOREIGN KEY (patient_id) REFERENCES Patient(id),
-    FOREIGN KEY (bill_id) REFERENCES Billing(id)
+    patient INT,
+    bill INT,
+    FOREIGN KEY (patient) REFERENCES Patient(id),
+    FOREIGN KEY (bill) REFERENCES Billing(id)
 );
 
 CREATE TABLE Admission (
@@ -141,10 +141,10 @@ CREATE TABLE Appointment (
     end_time DATETIME NOT NULL,
     purpose VARCHAR(255) NOT NULL,
     status VARCHAR(50) NOT NULL CHECK (status IN ('BOOKED', 'ONGOING', 'COMPLETED', 'CANCELLED')),
-    patient_id INT,
-    doctor_id INT,
-    FOREIGN KEY (patient_id) REFERENCES Patient(id),
-    FOREIGN KEY (doctor_id) REFERENCES Staff(id)
+    patient INT,
+    doctor INT,
+    FOREIGN KEY (patient) REFERENCES Patient(id),
+    FOREIGN KEY (doctor) REFERENCES Staff(id)
 );
 
 CREATE TABLE Patient_Allergy (
@@ -164,20 +164,19 @@ CREATE TABLE Staff_Shift (
     FOREIGN KEY (shift_id) REFERENCES Shift(id)
 );
 
-
-
 INSERT INTO Allergy (allergen, symptoms, category) VALUES
-('Balsam of Peru', 'Redness, swelling, itching, allergic contact dermatitis reactions, stomatitis, cheilitis, pruritus, hand eczema, generalized or resistant plantar dermatitis, rhinitis, conjunctivitis, and blisters.', 'Food'),
+-- Food allergens
+('Balsam of Peru', 'Redness, swelling, itching, dermatitis reactions, stomatitis, cheilitis, pruritus, hand eczema, rhinitis, conjunctivitis, and blisters.', 'Food'),
 ('Buckwheat', 'Asthma, rhinitis, pruritus, gastrointestinal disturbances, urticaria, angioedema, shock, anaphylaxis', 'Food'),
 ('Celery', 'Abdominal pain, nausea, vomiting, oral allergy syndrome, urticaria, neck or facial swelling, severe asthma symptoms, exercise-induced anaphylaxis, potentially fatal anaphylactic shocks', 'Food'),
 ('Egg', 'Anaphylaxis, swelling, sometimes flatulence and vomiting', 'Food'),
 ('Fish', 'Respiratory reactions, anaphylaxis, oral allergy syndrome, sometimes vomiting', 'Food'),
 ('Fruit', 'Mild itching, rash, generalized urticaria, oral allergy syndrome, abdominal pain, vomiting, anaphylaxis', 'Food'),
-('Garlic', 'Dermatitis, rhinitis, asthma, urticaria, asymmetrical pattern of fissure, thickening/shedding of the outer skin layers, rarely anaphylaxis', 'Food'),
+('Garlic', 'Dermatitis, asymmetrical fissure', 'Food'),
 ('Oats', 'Dermatitis, respiratory problems, anaphylaxis', 'Food'),
-('Maize', 'Hives, pallor, confusion, dizziness, stomach pain, swelling, vomiting, indigestion, diarrhea, cough, tightness in throat, wheezing, shortness of breath, anaphylaxis', 'Food'),
+('Maize', 'Hives, pallor, confusion, dizziness, stomach pain, swelling, vomiting, indigestion, diarrhea, cough, tightness in throat', 'Food'),
 ('Milk', 'Skin rash, hives, vomiting, diarrhea, constipation, stomach pain, flatulence, colitis, nasal congestion, dermatitis, blisters, migraine, anaphylaxis', 'Food'),
-('Mustard', 'Eczema, rash, hives, facial swelling, other skin reactions, oral allergy syndrome, conjunctivitis, wheezing, abdominal pain, diarrhea, nausea, vomiting, acid reflux, dizziness, asthma, chest pain, respiratory problems, anaphylaxis', 'Food'),
+('Mustard', 'Eczema, rash, hives, facial swelling, other skin reactions, oral allergy syndrome, conjunctivitis', 'Food'),
 ('Peanut', 'Anaphylaxis and swelling, sometimes vomiting', 'Food'),
 ('Poultry Meat', 'Hives, swelling, nausea, vomiting, diarrhea, severe oral allergy syndrome, shortness of breath, rarely anaphylactic shock', 'Food'),
 ('Red Meat', 'Hives, swelling, dermatitis, stomach pain, nausea, vomiting, dizziness, fainting, shortness of breath, anaphylaxis', 'Food'),
@@ -188,23 +187,27 @@ INSERT INTO Allergy (allergen, symptoms, category) VALUES
 ('Sulfites', 'Hives, rash, redness of skin, headache, burning behind eyes, asthma-like breathing difficulties, anaphylaxis', 'Food'),
 ('Tartrazine', 'Skin irritation, hives, rash', 'Food'),
 ('Tree nut', 'Anaphylaxis, swelling, rash, hives, sometimes vomiting', 'Food'),
-('Wheat', 'Eczema, hives, asthma, hay fever, oral allergy syndrome, angioedema, abdominal cramps, celiac disease, diarrhea, mental incompetence, anemia, nausea, vomiting, exercise-induced anaphylaxis', 'Food'),
-('Tetracycline', 'Severe headache, dizziness, blurred vision, fever, chills, body aches, flu symptoms, severe blistering, peeling, dark colored urine', 'Medical'),
+('Wheat', 'Eczema, hives, asthma, hay fever, oral allergy syndrome, angioedema, abdominal cramps, celiac disease, exercise-induced anaphylaxis', 'Food'),
+
+-- Medical allergens
+('Tetracycline', 'Severe headache, dizziness, blurred vision, fever, chills, body aches, flu symptoms, dark colored urine', 'Medical'),
 ('Dilantin', 'Swollen glands, easy bruising or bleeding, fever, sore throat', 'Medical'),
 ('Tegretol', 'Shortness of breath, wheezing or difficulty breathing, swelling of the face, lips, tongue, hives', 'Medical'),
 ('Penicillin', 'Diarrhea, hypersensitivity, nausea, rash, neurotoxicity, urticaria', 'Medical'),
-('Cephalosporins', 'Maculopapular or morbilliform skin eruption, and less commonly urticaria, eosinophilia, serum-sickness–like reactions, and anaphylaxis.', 'Medical'),
-('Sulfonamides', 'Urinary tract disorders, haemopoietic disorders, porphyria and hypersensitivity reactions, Stevens–Johnson syndrome toxic epidermal necrolysis', 'Medical'),
-('Non-steroidal anti-inflammatories', 'Swollen eyes, lips, or tongue, difficulty swallowing, shortness of breath, rapid heart rate', 'Medical'),
+('Cephalosporins', 'Maculopapular, serum-sickness–like reactions, and anaphylaxis.', 'Medical'),
+('Sulfonamides', 'Urinary tract disorders, haemopoietic disorder, Stevens–Johnson syndrome', 'Medical'),
+('Non-steroidal anti-inflammatories', 'Swollen eyes, lips, or tongue, difficulty swallowing', 'Medical'),
 ('Intravenous contrast dye', 'Anaphylactoid reactions and contrast-induced nephropathy', 'Medical'),
 ('Local anesthetics', 'Urticaria and rash, dyspnea, wheezing, flushing, cyanosis, tachycardia', 'Medical'),
-('Pollen', 'Sneezing, body ache, headache, allergic conjunctivitis, runny nose, irritation of the nose, nasal congestion, minor fatigue, chest pain, discomfort, coughing, sore throat, facial discomfort, possible asthma attack, wheezing', 'Environmental'),
+
+-- Environmental allergens
+('Pollen', 'Sneezing, irritation of the nose, nasal congestion, minor fatigue', 'Environmental'),
 ('Cat', 'Sneezing, itchy swollen eyes, rash, congestion, wheezing', 'Environmental'),
 ('Dog', 'Rash, sneezing, congestion, wheezing, vomiting from coughing, itchy welts.', 'Environmental'),
 ('Insect sting', 'Hives, wheezing, possible anaphylaxis', 'Environmental'),
-('Mold', 'Sneeze, coughing, itchy, discharge from the nose, respiratory irritation, congested feeling, joint aches, headaches, fatigue', 'Environmental'),
-('Perfume', 'Itchy eyes, runny nose, sore throat, headaches, muscle/joint pain, asthma attack, wheezing, chest pain, blisters', 'Environmental'),
-('Cosmetics', 'Contact dermatitis, irritant contact dermatitis, inflammation, redness, conjunctivitis, sneezing', 'Environmental'),
+('Mold', 'Sneeze, coughing, itchy, discharge from the nose, respiratory irritation, congested feeling', 'Environmental'),
+('Perfume', 'Itchy eyes, runny nose, sore throat, headaches, muscle/joint pain, asthma attack', 'Environmental'),
+('Cosmetics', 'Contact dermatitis, irritant contact dermatitis, conjunctivitis, sneezing', 'Environmental'),
 ('Semen', 'Burning, pain and swelling, swelling or blisters, vaginal redness, fever, runny nose, extreme fatigue', 'Environmental'),
 ('Latex', 'Contact dermatitis, hypersensitivity', 'Environmental'),
 ('Water', 'Epidermal itching, swelling of the oral cavity after drinking water, anaphylaxis', 'Environmental'),
@@ -217,8 +220,10 @@ INSERT INTO Allergy (allergen, symptoms, category) VALUES
 ('Formaldehyde', 'Allergic contact dermatitis', 'Environmental'),
 ('Photographic developers', 'Allergic contact dermatitis', 'Environmental'),
 ('Fungicide', 'Allergic contact dermatitis, fever, anaphylaxis', 'Environmental'),
+
+-- Contact allergens
 ('Dimethylaminopropylamine (DMAPA)', 'Eyelid dermatitis', 'Contact'),
-('Latex', 'Avocado, banana, chestnut, kiwi, passion fruit, peach, mango, pineapple, fig, cantaloupe, apple, papaya, ethylene-ripened fruits, allergic contact dermatitis, hypersensitivity', 'Contact'),
+('Latex', 'Ethylene-ripened fruits, allergic contact dermatitis, hypersensitivity', 'Contact'),
 ('Paraphenylenediamine (PPD)', 'Eyelid dermatitis, black hair dye, color developer, scuba gear, henna', 'Contact'),
 ('Glyceryl monothioglycolate', 'Eyelid dermatitis, permanent hair waving solutions', 'Contact'),
 ('Toluenesulfonamide formaldehyde', 'Eyelid dermatitis, nail polish', 'Contact'),
