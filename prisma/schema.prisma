@@ -24,10 +24,22 @@ model Patient {
 
   insurance         Insurance?
   addresse          Address?
-  alleries          Allergy[]
+  alleries          PatientAllergy[]
   appoinments       Appointment[]
   treatment_history TreatmentHistory[]
   billings          Billing[]
+}
+
+model PatientAllergy {
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patientId Int
+
+  allergy   Allergy @relation(fields: [allergyId], references: [id], onDelete: Cascade)
+  allergyId Int
+
+  severity String // You can add a constraint with @default or using the SQL CHECK directly
+
+  @@id([patientId, allergyId])
 }
 
 model Insurance {
@@ -48,11 +60,12 @@ model Address {
 }
 
 model Allergy {
-  id       Int       @id @default(autoincrement())
+  id       Int              @id @default(autoincrement())
   allergen String
   symptoms String
   category String
-  patient  Patient[]
+  severity String
+  patient  PatientAllergy[]
 }
 
 model Appointment {

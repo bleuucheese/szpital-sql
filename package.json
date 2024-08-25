@@ -9,7 +9,9 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@prisma/client": "^5.18.0",
-    "prisma": "^5.18.0"
+    "prisma": "^5.18.0",
+    "tsx": "^4.17.0"
   }
 }
