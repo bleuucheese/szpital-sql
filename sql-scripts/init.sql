@@ -1,5 +1,26 @@
 create database test2408;
 use test2408;
+
+-- Reset the database
+DROP TABLE IF EXISTS Patient_Allergy;
+DROP TABLE IF EXISTS Staff_Shift;
+DROP TABLE IF EXISTS Procedures;
+DROP TABLE IF EXISTS Admission;
+DROP TABLE IF EXISTS TreatmentHistory;
+DROP TABLE IF EXISTS Appointment;
+DROP TABLE IF EXISTS EmploymentHistory;
+DROP TABLE IF EXISTS Qualification;
+DROP TABLE IF EXISTS Department;
+DROP TABLE IF EXISTS Shift;
+DROP TABLE IF EXISTS Medicine;
+DROP TABLE IF EXISTS Billing;
+DROP TABLE IF EXISTS Patient;
+DROP TABLE IF EXISTS Address;
+DROP TABLE IF EXISTS Insurance;
+DROP TABLE IF EXISTS Allergy;
+DROP TABLE IF EXISTS Staff; 
+
+
 CREATE TABLE Allergy (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category VARCHAR(255) NOT NULL,
