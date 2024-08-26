@@ -61,10 +61,9 @@ model Address {
 
 model Allergy {
   id       Int              @id @default(autoincrement())
-  allergen String
-  symptoms String
-  category String
-  severity String
+  allergen String           @db.Text
+  symptoms String           @db.Text
+  category String           @db.Text
   patient  PatientAllergy[]
 }
 

@@ -22,7 +22,22 @@ const generateStaff = () => {
     }),
   };
 };
-
+const generateAdminStaff = () => {
+  return {
+    first_name: faker.person.firstName(),
+    last_name: faker.person.lastName(),
+    dob: faker.date.birthdate(),
+    job_type: "administrative personnel",
+    salary: faker.number.float({
+      min: 5000,
+      max: 50000,
+      multipleOf: 0.01,
+    }),
+  };
+};
 export const staffs = faker.helpers.multiple(generateStaff, {
   count: 20,
+});
+export const adminStaffs = faker.helpers.multiple(generateAdminStaff, {
+  count: 3,
 });

@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { allergies } from "../data/allergies";
-import { departments } from "../data/department";
-import { staffs } from "../data/staff";
+import { allergies } from "./data/allergies";
+import { departments } from "./data/department";
+import { adminStaffs, staffs } from "./data/staff";
 const prisma = new PrismaClient();
 const reset = async () => {
   console.log("Start resetting db");
@@ -24,6 +24,9 @@ const ensureEnoughDoctors = async (requiredDoctors: number) => {
     // Generate and insert new staff data
     await prisma.staff.deleteMany(); // Clear existing staff data
     await prisma.staff.createMany({
+      data: adminStaffs,
+    });
+    await prisma.staff.createMany({
       data: staffs,
     });
 
@@ -43,12 +46,16 @@ const main = async () => {
   await reset();
   // Create allergies
   console.log("Start creating allergies");
+
   await prisma.allergy.createMany({
     data: allergies,
   });
   console.log("Finish creating allergies");
   // Create Staff
   console.log("Start creating staff");
+  await prisma.staff.createMany({
+    data: adminStaffs,
+  });
   await prisma.staff.createMany({
     data: staffs,
   });
@@ -65,6 +72,9 @@ const main = async () => {
   });
   if (managers.length < departments.length) {
     await prisma.staff.deleteMany().then(async () => {
+      await prisma.staff.createMany({
+        data: adminStaffs,
+      });
       await prisma.staff.createMany({
         data: staffs,
       });
