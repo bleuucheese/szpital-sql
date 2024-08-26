@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { allergies } from "../data/allergies";
 import { departments } from "../data/department";
-import { staffs } from "../data/staff";
+import { adminStaffs, staffs } from "../data/staff";
 const prisma = new PrismaClient();
 const reset = async () => {
   console.log("Start resetting db");
@@ -43,6 +43,9 @@ const main = async () => {
   await reset();
   // Create allergies
   console.log("Start creating allergies");
+  await prisma.staff.createMany({
+    data: adminStaffs,
+  });
   await prisma.allergy.createMany({
     data: allergies,
   });
