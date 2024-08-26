@@ -10,7 +10,6 @@ DROP TABLE IF EXISTS TreatmentHistory;
 DROP TABLE IF EXISTS Appointment;
 DROP TABLE IF EXISTS EmploymentHistory;
 DROP TABLE IF EXISTS Qualification;
-DROP TABLE IF EXISTS Department;
 DROP TABLE IF EXISTS Shift;
 DROP TABLE IF EXISTS Medicine;
 DROP TABLE IF EXISTS Billing;
@@ -18,7 +17,9 @@ DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS Address;
 DROP TABLE IF EXISTS Insurance;
 DROP TABLE IF EXISTS Allergy;
+DROP TABLE IF EXISTS Department;
 DROP TABLE IF EXISTS Staff; 
+
 
 
 CREATE TABLE Allergy (
@@ -62,9 +63,17 @@ CREATE TABLE Staff (
     dob DATE NOT NULL,
     job_type VARCHAR(255) NOT NULL,
     salary DECIMAL(10, 2) NOT NULL,
-    director INT,
-    FOREIGN KEY (director) REFERENCES Staff(id)
+    employed_date DATE NOT NULL,
+    department INT,
+    director INT
 );
+
+CREATE TABLE Department (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    manager INT
+);
+
 
 CREATE TABLE Shift (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -82,12 +91,6 @@ CREATE TABLE Qualification (
     FOREIGN KEY (holder) REFERENCES Staff(id)
 );
 
-CREATE TABLE Department (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    manager INT,
-    FOREIGN KEY (manager) REFERENCES Staff(id)
-);
 
 CREATE TABLE EmploymentHistory (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -131,9 +134,11 @@ CREATE TABLE Procedures (
     medicine INT,
     med_quantity INT,
     performed_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    history INT,
     FOREIGN KEY (performer) REFERENCES Staff(id),
     FOREIGN KEY (patient) REFERENCES Patient(id),
-    FOREIGN KEY (medicine) REFERENCES Medicine(id)
+    FOREIGN KEY (medicine) REFERENCES Medicine(id),
+    FOREIGN KEY (history) REFERENCES TreatmentHistory(id)
 );
 
 CREATE TABLE TreatmentHistory (
@@ -143,6 +148,7 @@ CREATE TABLE TreatmentHistory (
     visited_date DATE NOT NULL,
     patient INT,
     bill INT,
+    has_completed BOOLEAN NOT NULL DEFAULT FALSE, -- when done print bill
     FOREIGN KEY (patient) REFERENCES Patient(id),
     FOREIGN KEY (bill) REFERENCES Billing(id)
 );
@@ -186,3 +192,16 @@ CREATE TABLE Staff_Shift (
     FOREIGN KEY (staff_id) REFERENCES Staff(id),
     FOREIGN KEY (shift_id) REFERENCES Shift(id)
 );
+
+ALTER TABLE Staff
+ADD CONSTRAINT fk_department
+FOREIGN KEY (department) REFERENCES Department(id);
+
+ALTER TABLE Staff
+ADD CONSTRAINT fk_director
+FOREIGN KEY (director) REFERENCES Staff(id);
+
+ALTER TABLE Department
+ADD CONSTRAINT fk_manager
+FOREIGN KEY (manager) REFERENCES Staff(id);
+
