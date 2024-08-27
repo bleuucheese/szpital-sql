@@ -154,7 +154,7 @@ CREATE TABLE Medicine (
     name VARCHAR(255) NOT NULL,
     effect TEXT,
     side_effect TEXT,
-    quantity INT NOT NULL,
+    -- quantity INT NOT NULL, -- get rid for simplicity
     price DECIMAL(10, 2) NOT NULL
 );
 
@@ -170,7 +170,7 @@ CREATE TABLE TreatmentHistory (
     id INT AUTO_INCREMENT PRIMARY KEY,
     type VARCHAR(255) NOT NULL CHECK (type IN ('INPATIENT', 'OUTPATIENT')) DEFAULT 'OUTPATIENT',
     diseases TEXT,
-    visited_date DATE NOT NULL,
+    visited_date DATE NOT NULL DEFAULT (CURRENT_DATE),
     has_completed BOOLEAN NOT NULL DEFAULT FALSE, -- when done print bill
     patient INT,
     bill INT,
