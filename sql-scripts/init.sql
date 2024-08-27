@@ -1,5 +1,50 @@
-create database test2408;
-use test2408;
+/*
+														Project: Hospital Management System
+														Author: Nguyen Ha
+
+	A. CREATE DATABASE
+	B. DROP AND CREATE FUNCTIONS
+	C. DROP AND CREATE TABLE (INCLUDING CONSTRAINTS (FK , UNIQUE, DEFAULT, INDEXING, PARTITIONING))
+	D. CREATE STORE PROCEDURE
+	E. CREATE TRIGGER
+	F. DATA POPULATION
+	G. CREATE VIEWS
+
+NOTE:- 
+	1. Roles for Security:
+    -
+    
+    2. Computed Columns based on a function:
+		- 
+
+	3. Views for Report:
+		- 
+
+	4. Indexes, Stored Procedures, Triggers, Functions:
+		- 
+
+*/
+
+/************************************************************************************************/
+--- A. CREATE DATABASE
+/************************************************************************************************/
+IF DB_ID('HospitalManagementSystem') IS NULL
+BEGIN
+	CREATE DATABASE HospitalManagementSystem
+END
+GO
+
+
+/************************************************************************************************/
+--- B. CREATE TRIGGERS
+/************************************************************************************************/
+
+
+/************************************************************************************************/
+--- C. CREATE TABLES
+/************************************************************************************************/
+
+use HospitalManagementSystem;
 
 -- Reset the database
 DROP TABLE IF EXISTS Patient_Allergy;
@@ -17,8 +62,10 @@ DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS Address;
 DROP TABLE IF EXISTS Insurance;
 DROP TABLE IF EXISTS Allergy;
-DROP TABLE IF EXISTS Department;
+ALTER TABLE Staff DROP FOREIGN KEY fk_department;
+ALTER TABLE Department DROP FOREIGN KEY fk_manager;
 DROP TABLE IF EXISTS Staff; 
+DROP TABLE IF EXISTS Department;
 
 
 
@@ -63,7 +110,7 @@ CREATE TABLE Staff (
     dob DATE NOT NULL,
     job_type VARCHAR(255) NOT NULL,
     salary DECIMAL(10, 2) NOT NULL,
-    employed_date DATE NOT NULL,
+    hired_date DATE NOT NULL,
     department INT,
     director INT
 );
@@ -73,7 +120,6 @@ CREATE TABLE Department (
     name VARCHAR(255) NOT NULL,
     manager INT
 );
-
 
 CREATE TABLE Shift (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -90,7 +136,6 @@ CREATE TABLE Qualification (
     holder INT,
     FOREIGN KEY (holder) REFERENCES Staff(id)
 );
-
 
 CREATE TABLE EmploymentHistory (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -120,9 +165,21 @@ CREATE TABLE Medicine (
 CREATE TABLE Billing (
     id INT AUTO_INCREMENT PRIMARY KEY,
     amount DECIMAL(10, 2) NOT NULL,
-    billing_date DATE NOT NULL,
-    due_date DATE NOT NULL,
+    billing_date DATE NOT NULL DEFAULT (CURRENT_DATE),
+    due_date DATE NOT NULL DEFAULT (DATE_ADD(CURRENT_DATE(), INTERVAL 30 DAY)),
     payment_status VARCHAR(50) NOT NULL CHECK (payment_status IN ('UNPAID', 'PAID'))
+);
+
+CREATE TABLE TreatmentHistory (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type VARCHAR(255) NOT NULL CHECK (type IN ('INPATIENT', 'OUTPATIENT')) DEFAULT 'OUTPATIENT',
+    diseases TEXT,
+    visited_date DATE NOT NULL,
+    has_completed BOOLEAN NOT NULL DEFAULT FALSE, -- when done print bill
+    patient INT,
+    bill INT,
+    FOREIGN KEY (patient) REFERENCES Patient(id),
+    FOREIGN KEY (bill) REFERENCES Billing(id)
 );
 
 CREATE TABLE Procedures (
@@ -141,25 +198,13 @@ CREATE TABLE Procedures (
     FOREIGN KEY (history) REFERENCES TreatmentHistory(id)
 );
 
-CREATE TABLE TreatmentHistory (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    type VARCHAR(255) NOT NULL CHECK (type IN ('INPATIENT', 'OUTPATIENT')),
-    diseases TEXT,
-    visited_date DATE NOT NULL,
-    patient INT,
-    bill INT,
-    has_completed BOOLEAN NOT NULL DEFAULT FALSE, -- when done print bill
-    FOREIGN KEY (patient) REFERENCES Patient(id),
-    FOREIGN KEY (bill) REFERENCES Billing(id)
-);
-
 CREATE TABLE Admission (
     id INT AUTO_INCREMENT PRIMARY KEY,
     status VARCHAR(50) NOT NULL,
-    admitted_date DATE NOT NULL,
+    admitted_date DATE NOT NULL DEFAULT (CURRENT_DATE),
     discharged_date DATE,
     room_type VARCHAR(50) NOT NULL CHECK (room_type IN ('STANDARD', 'PREMIUM')),
-    price DECIMAL(10, 2) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL, -- per day (DATE_DIFF), std: $100, prem: $200
     history INT,
     FOREIGN KEY (history) REFERENCES TreatmentHistory(id)
 );
@@ -193,6 +238,7 @@ CREATE TABLE Staff_Shift (
     FOREIGN KEY (shift_id) REFERENCES Shift(id)
 );
 
+-- Avoid circular reference
 ALTER TABLE Staff
 ADD CONSTRAINT fk_department
 FOREIGN KEY (department) REFERENCES Department(id);
@@ -204,4 +250,3 @@ FOREIGN KEY (director) REFERENCES Staff(id);
 ALTER TABLE Department
 ADD CONSTRAINT fk_manager
 FOREIGN KEY (manager) REFERENCES Staff(id);
-

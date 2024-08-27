@@ -246,7 +246,7 @@ INSERT INTO Department (name) VALUES
 ('Orthopedics');
 
 
-INSERT INTO Staff (fname, lname, dob, job_type, salary, employed_date, department, director) VALUES
+INSERT INTO Staff (fname, lname, dob, job_type, salary, hired_date, department, director) VALUES
 -- Administrative Personnel
 ('Meredith', 'Grey', '1955-07-22', 'Administrative Personnel', 500000.00, '2017-01-01', NULL, NULL), -- president
 ('Shaun', 'Murphy', '1962-11-05', 'Administrative Personnel', 450000.00, '2017-03-15', NULL, 1), -- vice president
@@ -484,15 +484,32 @@ INSERT INTO EmploymentHistory (change_type, prev_dept, new_dept, prev_salary, ne
 ('Title Change', NULL, NULL, NULL, NULL, 'Nurse', 'Doctor', '2024-08-09', 25),
 ('Salary Change', NULL, NULL, 71000.00, 88000.00, NULL, NULL, '2024-08-10', 16);
 
-INSERT INTO TreatmentHistory(type, diseases, patient) VALUES
-('INPATIENT', 'Migrane, Hypertension', 1),
-('OUTPATIENT', 'Heartattack', 2);
+INSERT INTO Billing (amount, billing_date, due_date, payment_status) VALUES
+(720, '2020-01-15', '2020-02-13', 'PAID'),
+(3900, '2020-01-15', '2020-02-13', 'PAID'),
+(480, '2020-01-16', '2020-02-14', 'PAID');
 
--- * Checkups/Prescription/Operation/Ultrasound/Image scans/Lab
-INSERT INTO Procedures (category, price, performer, patient, medicine, med_quantity, history) VALUES
-('Checkups', 69, 5, 1, NULL, NULL),
-('Prescription', 60, 5, 1, 2, 4),
-('Ultrasound', 300, 5, 1, NULL, NULL),
-('Lab', 99, 5, 1, NULL, NULL),
-('Image scans', 112, 5, 1, NULL, NULL),
-('Operations', 3000, 12, 2, NULL, NULL);
+INSERT INTO TreatmentHistory(type, diseases, visited_date, patient, bill, has_completed) VALUES
+('OUTPATIENT', 'Migrane, Hypertension, Dizziness', '2020-01-15', 1, 1, True),
+('INPATIENT', 'Heartattack, Nausea', '2020-01-15', 2, 2, True),
+('OUTPATIENT', 'HP Virus, Digestive Disorder', '2020-01-16', 3, 3, True);
+
+-- Checkups: 100/Prescription: Med*Quant/Operations: 3000/Ultrasound: 400/Image scans+Lab: 80
+INSERT INTO Procedures (category, price, performer, patient, medicine, med_quantity, performed_date, history) VALUES
+('Checkups', 100.00, 9, 1, NULL, NULL, '2020-01-15 10:29:58', 1),
+('Prescription', 60.00, 21, 1, 16, 3, '2020-01-15 10:45:32', 1),
+('Ultrasound', 400.00, 12, 1, NULL, NULL, '2020-01-15 11:11:11', 1),
+('Lab', 80.00, 19, 1, NULL, NULL, '2020-01-15 13:00:25', 1),
+('Image scans', 80.00, 7, 1, NULL, NULL, '2020-01-15 13:37:56', 1),
+('Checkups', 100.00, 28, 2, NULL, NULL, '2020-01-15 18:05:04', 2),
+('Operations', 3100.00, 6, 2, 4, 1, '2020-01-15 18:20:00', 2),
+('Ultrasound', 400.00, 13, 3, NULL, NULL, '2020-01-16 16:11:11', 3),
+('Lab', 80.00, 7, 3, NULL, NULL, '2020-01-16 17:02:19', 3);
+
+INSERT INTO Admission(status, admitted_date, discharged_date, room_type, price, history) VALUES
+('DISCHARGED', '2020-01-15', '2020-01-19', 'PREMIUM', 800.00, 2);
+
+INSERT INTO Appointment(start_time, end_time, purpose, status, patient, doctor) VALUES
+('2024-08-27 15:00:00', '2024-08-27 17:00:00', 'Appendix Removal Consultation', 'COMPLETED', 20, 10),
+('2024-08-29 10:00:00', '2024-08-28 12:00:00', 'Checkup', 'CANCELLED', 19, 15),
+('2024-08-31 14:15:00', '2024-08-29 16:15:00', 'Consultation', 'BOOKED', 18, 21);
