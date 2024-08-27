@@ -28,12 +28,8 @@ NOTE:-
 /************************************************************************************************/
 --- A. CREATE DATABASE
 /************************************************************************************************/
-IF DB_ID('HospitalManagementSystem') IS NULL
-BEGIN
-	CREATE DATABASE HospitalManagementSystem
-END
-GO
-
+DROP DATABASE HospitalManagementSystem;
+CREATE DATABASE IF NOT EXISTS HospitalManagementSystem;
 
 /************************************************************************************************/
 --- B. CREATE TRIGGERS
@@ -44,7 +40,7 @@ GO
 --- C. CREATE TABLES
 /************************************************************************************************/
 
-use HospitalManagementSystem;
+USE HospitalManagementSystem;
 
 -- Reset the database
 DROP TABLE IF EXISTS Patient_Allergy;
