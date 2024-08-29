@@ -1,3 +1,4 @@
+use test2908;
 INSERT INTO Allergy (allergen, symptoms, category) VALUES
 -- Food allergens
 ('Balsam of Peru', 'Redness, swelling, itching, dermatitis reactions, stomatitis, cheilitis, pruritus, hand eczema, rhinitis, conjunctivitis, and blisters.', 'Food'),
@@ -162,74 +163,71 @@ INSERT INTO Medicine (name, effect, side_effect, price) VALUES
 ('Azithromycin', 'Treats bacterial infections', 'Diarrhea, nausea', 20.00),
 ('Clotrimazole', 'Treats fungal infections', 'Skin irritation, rash', 8.00);
 
+INSERT INTO Patient (cid, first_name, last_name, dob, gender, blood_type) VALUES
+('1A2B3C4D5E6F7G8', 'Kevin', 'Darroyo', '1993-04-12', 'Male', 'O+'),
+('2B3C4D5E6F7G8H9', 'Elise', 'Jasinki', '2014-06-22', 'Female', 'A-'),
+('3C4D5E6F7G8H9I0', 'Jakub', 'Nowak', '2009-11-13', 'Male', 'B+'),
+('4D5E6F7G8H9I0J1', 'Lochlan', 'Noble', '1981-02-08', 'Female', 'AB+'),
+('5E6F7G8H9I0J1K2', 'Kacper', 'Blaszczyk', '1934-09-19', 'Male', 'O-'),
+('6F7G8H9I0J1K2L3', 'Karin', 'Oktawian', '1987-01-15', 'Female', 'A+'),
+('7G8H9I0J1K2L3M4', 'Olaf', 'Grodzki', '1995-03-23', 'Male', 'B-'),
+('8H9I0J1K2L3M4N5', 'Julia', 'Wajda', '1975-07-30', 'Female', 'AB-'),
+('9I0J1K2L3M4N5O6', 'Antek', 'Rachwal', '1969-05-25', 'Male', 'O+'),
+('0J1K2L3M4N5O6P7', 'Dominika', 'Mycio', '1982-10-09', 'Female', 'A-'),
+('1K2L3M4N5O6P7Q8', 'Lukasz', 'Zuchniewicz', '2003-08-17', 'Male', 'B+'),
+('2L3M4N5O6P7Q8R9', 'Amine', 'Harizi', '2001-02-11', 'Female', 'AB+'),
+('3M4N5O6P7Q8R9S0', 'Milosz', 'Rogala', '1981-05-21', 'Male', 'O-'),
+('4N5O6P7Q8R9S0T1', 'Niko', 'Rakus', '2000-09-07', 'Male', 'A+'),
+('5O6P7Q8R9S0T1U2', 'Attila', 'Szlancsik', '1992-09-13', 'Male', 'B-'),
+('6P7Q8R9S0T1U2V3', 'Pawel', 'Biernat', '1969-12-11', 'Female', 'AB-'),
+('7Q8R9S0T1U2V3W4', 'Magdalena', 'Bulgakov', '1955-02-05', 'Female', 'O+'),
+('8R9S0T1U2V3W4X5', 'Andrius', 'Baltutis', '1994-01-05', 'Male', 'A-'),
+('9S0T1U2V3W4X5Y6', 'Ivan', 'Filipenko', '1995-04-17', 'Male', 'B+'),
+('0T1U2V3W4X5Y6Z7', 'Wiktoria', 'Sekrit', '1972-06-01', 'Female', 'AB+');
 
-INSERT INTO Insurance (code, end_date) VALUES
-('XK92JF7B2A', '2025-12-31'),
-('DL84YH3K9P', '2025-11-30'),
-('QA19ZR5T4M', '2026-01-15'),
-('WT65XC8V1L', '2025-09-20'),
-('PM93ND2G7O', '2026-02-10'),
-('FV27TH9Q6B', '2025-08-05'),
-('YN38UI4M5A', '2026-03-25'),
-('MK65RX2F9C', '2025-07-14'),
-('BC21VJ7P8K', '2026-04-18'),
-('TR89ZP3M4D', '2025-10-22'),
-('NJ47GL2Q5E', '2026-05-30'),
-('QW93FX6T1Y', '2025-06-17'),
-('LH83PT9R4U', '2026-08-01'),
-('EU62DN5V7B', '2025-03-12'),
-('OI74SK1G9F', '2026-09-27'),
-('PB67ZC3R2M', '2025-04-15'),
-('CK45XJ8Q1A', '2026-10-11'),
-('HY92DF3P7N', '2025-01-30'),
-('ZM74XR6T5L', '2026-11-08'),
-('VW28KM9Q2B', '2025-02-23');
+INSERT INTO Insurance (code, expired_date, patient_id) VALUES
+('XK92JF7B2A', '2025-12-31', 1),
+('DL84YH3K9P', '2025-11-30', 2),
+('QA19ZR5T4M', '2026-01-15', 3),
+('WT65XC8V1L', '2025-09-20', 4),
+('PM93ND2G7O', '2026-02-10', 5),
+('FV27TH9Q6B', '2025-08-05', 6),
+('YN38UI4M5A', '2026-03-25', 7),
+('MK65RX2F9C', '2025-07-14', 8),
+('BC21VJ7P8K', '2026-04-18', 9),
+('TR89ZP3M4D', '2025-10-22', 10),
+('NJ47GL2Q5E', '2026-05-30', 11),
+('QW93FX6T1Y', '2025-06-17', 12),
+('LH83PT9R4U', '2026-08-01', 13),
+('EU62DN5V7B', '2025-03-12', 14),
+('OI74SK1G9F', '2026-09-27', 15),
+('PB67ZC3R2M', '2025-04-15', 16),
+('CK45XJ8Q1A', '2026-10-11', 17),
+('HY92DF3P7N', '2025-01-30', 18),
+('ZM74XR6T5L', '2026-11-08', 19),
+('VW28KM9Q2B', '2025-02-23', 20);
 
-
-INSERT INTO Address (street, ward, district, city) VALUES
-('22 Le Loi', 'Ward 1', 'District 1', 'Ho Chi Minh City'),
-('36 Quoc Huong', 'Thao Dien Ward', 'District 2', 'Ho Chi Minh City'),
-('1 Vo Van Tan', 'Vo Thi Sau Ward', 'District 3', 'Ho Chi Minh City'),
-('101 Cong Hoa', 'Ward 8', 'District 4', 'Ho Chi Minh City'),
-('235 Nguyen Van Cu', 'Ward 4', 'District 5', 'Ho Chi Minh City'),
-('303 Hai Ba Trung', 'Ward 6', 'District 6', 'Ho Chi Minh City'),
-('701 Nguyen Van Linh', 'Tan Phong Ward', 'District 7', 'Ho Chi Minh City'),
-('505 Nguyen Thi Minh Khai', 'Ward 8', 'District 8', 'Ho Chi Minh City'),
-('12 Le Duan', 'Ward 9', 'District 9', 'Ho Chi Minh City'),
-('69 Ba Hat', 'Ward 10', 'District 10', 'Ho Chi Minh City'),
-('520 Vo Thi Sau', 'Ward 11', 'District 11', 'Ho Chi Minh City'),
-('99 Cong Quynh', 'Ward 12', 'District 12', 'Ho Chi Minh City'),
-('327 No Trang Long', 'Ward 13', 'Binh Thanh District', 'Ho Chi Minh City'),
-('83 Nguyen Van Troi', 'Ward 14', 'Go Vap District', 'Ho Chi Minh City'),
-('28 Truong Chinh', 'Ward 1', 'Tan Binh District', 'Ho Chi Minh City'),
-('132 Cong Hoa', 'Ward 16', 'Tan Phu District', 'Ho Chi Minh City'),
-('33 Phan Van Tri', 'Ward 17', 'Binh Tan District', 'Ho Chi Minh City'),
-('402 Phan Xich Long', 'Ward 2', 'Phu Nhuan District', 'Ho Chi Minh City'),
-('1616 Hiep Binh', 'Ward 4', 'Thu Duc District', 'Ho Chi Minh City'),
-('49 Phan Van Bay', 'Ward 2', 'Nha Be District', 'Ho Chi Minh City');
-
-
-INSERT INTO Patient (cid, fname, lname, dob, gender, blood_type, insurance, address) VALUES
-('1A2B3C4D5E6F7G8', 'Kevin', 'Darroyo', '1993-04-12', 'Male', 'O+', 'XK92JF7B2A', 1),
-('2B3C4D5E6F7G8H9', 'Elise', 'Jasinki', '2014-06-22', 'Female', 'A-', 'DL84YH3K9P', 2),
-('3C4D5E6F7G8H9I0', 'Jakub', 'Nowak', '2009-11-13', 'Male', 'B+', 'QA19ZR5T4M', 3),
-('4D5E6F7G8H9I0J1', 'Lochlan', 'Noble', '1981-02-08', 'Female', 'AB+', 'WT65XC8V1L', 4),
-('5E6F7G8H9I0J1K2', 'Kacper', 'Blaszczyk', '1934-09-19', 'Male', 'O-', 'PM93ND2G7O', 5),
-('6F7G8H9I0J1K2L3', 'Karin', 'Oktawian', '1987-01-15', 'Female', 'A+', 'FV27TH9Q6B', 6),
-('7G8H9I0J1K2L3M4', 'Olaf', 'Grodzki', '1995-03-23', 'Male', 'B-', 'YN38UI4M5A', 7),
-('8H9I0J1K2L3M4N5', 'Julia', 'Wajda', '1975-07-30', 'Female', 'AB-', 'MK65RX2F9C', 8),
-('9I0J1K2L3M4N5O6', 'Antek', 'Rachwal', '1969-05-25', 'Male', 'O+', 'BC21VJ7P8K', 9),
-('0J1K2L3M4N5O6P7', 'Dominika', 'Mycio', '1982-10-09', 'Female', 'A-', 'TR89ZP3M4D', 10),
-('1K2L3M4N5O6P7Q8', 'Lukasz', 'Zuchniewicz', '2003-08-17', 'Male', 'B+', 'NJ47GL2Q5E', 11),
-('2L3M4N5O6P7Q8R9', 'Amine', 'Harizi', '2001-02-11', 'Female', 'AB+', 'QW93FX6T1Y', 12),
-('3M4N5O6P7Q8R9S0', 'Milosz', 'Rogala', '1981-05-21', 'Male', 'O-', 'LH83PT9R4U', 13),
-('4N5O6P7Q8R9S0T1', 'Niko', 'Rakus', '2000-09-07', 'Male', 'A+', 'EU62DN5V7B', 14),
-('5O6P7Q8R9S0T1U2', 'Attila', 'Szlancsik', '1992-09-13', 'Male', 'B-', 'OI74SK1G9F', 15),
-('6P7Q8R9S0T1U2V3', 'Pawel', 'Biernat', '1969-12-11', 'Female', 'AB-', 'PB67ZC3R2M', 16),
-('7Q8R9S0T1U2V3W4', 'Magdalena', 'Bulgakov', '1955-02-05', 'Female', 'O+', 'CK45XJ8Q1A', 17),
-('8R9S0T1U2V3W4X5', 'Andrius', 'Baltutis', '1994-01-05', 'Male', 'A-', 'HY92DF3P7N', 18),
-('9S0T1U2V3W4X5Y6', 'Ivan', 'Filipenko', '1995-04-17', 'Male', 'B+', 'ZM74XR6T5L', 19),
-('0T1U2V3W4X5Y6Z7', 'Wiktoria', 'Sekrit', '1972-06-01', 'Female', 'AB+', 'VW28KM9Q2B', 20);
+INSERT INTO Address (address_line, ward, district, city, patient_id) VALUES
+('22 Le Loi', 'Ward 1', 'District 1', 'Ho Chi Minh City', 1),
+('36 Quoc Huong', 'Thao Dien Ward', 'District 2', 'Ho Chi Minh City', 2),
+('1 Vo Van Tan', 'Vo Thi Sau Ward', 'District 3', 'Ho Chi Minh City', 3),
+('101 Cong Hoa', 'Ward 8', 'District 4', 'Ho Chi Minh City', 4),
+('235 Nguyen Van Cu', 'Ward 4', 'District 5', 'Ho Chi Minh City', 5),
+('303 Hai Ba Trung', 'Ward 6', 'District 6', 'Ho Chi Minh City', 6),
+('701 Nguyen Van Linh', 'Tan Phong Ward', 'District 7', 'Ho Chi Minh City', 7),
+('505 Nguyen Thi Minh Khai', 'Ward 8', 'District 8', 'Ho Chi Minh City', 8),
+('12 Le Duan', 'Ward 9', 'District 9', 'Ho Chi Minh City', 9),
+('69 Ba Hat', 'Ward 10', 'District 10', 'Ho Chi Minh City', 10),
+('520 Vo Thi Sau', 'Ward 11', 'District 11', 'Ho Chi Minh City', 11),
+('99 Cong Quynh', 'Ward 12', 'District 12', 'Ho Chi Minh City', 12),
+('327 No Trang Long', 'Ward 13', 'Binh Thanh District', 'Ho Chi Minh City', 13),
+('83 Nguyen Van Troi', 'Ward 14', 'Go Vap District', 'Ho Chi Minh City', 14),
+('28 Truong Chinh', 'Ward 1', 'Tan Binh District', 'Ho Chi Minh City', 15),
+('132 Cong Hoa', 'Ward 16', 'Tan Phu District', 'Ho Chi Minh City', 16),
+('33 Phan Van Tri', 'Ward 17', 'Binh Tan District', 'Ho Chi Minh City', 17),
+('402 Phan Xich Long', 'Ward 2', 'Phu Nhuan District', 'Ho Chi Minh City', 18),
+('1616 Hiep Binh', 'Ward 4', 'Thu Duc District', 'Ho Chi Minh City', 19),
+('49 Phan Van Bay', 'Ward 2', 'Nha Be District', 'Ho Chi Minh City', 20);
 
 INSERT INTO Department (name) VALUES
 ('Emergency'),
@@ -246,7 +244,7 @@ INSERT INTO Department (name) VALUES
 ('Orthopedics');
 
 
-INSERT INTO Staff (fname, lname, dob, job_type, salary, hired_date, department, director) VALUES
+INSERT INTO Staff (first_name, last_name, dob, job_type, salary, hired_date, department_id, manager_id) VALUES
 -- Administrative Personnel
 ('Meredith', 'Grey', '1955-07-22', 'Administrative Personnel', 500000.00, '2017-01-01', NULL, NULL), -- president
 ('Shaun', 'Murphy', '1962-11-05', 'Administrative Personnel', 450000.00, '2017-03-15', NULL, 1), -- vice president
@@ -292,7 +290,20 @@ INSERT INTO Staff (fname, lname, dob, job_type, salary, hired_date, department, 
 ('Missy', 'Sippy', '1999-07-27', 'Nurse', 81000.00, '2024-07-27', 11, 14),
 ('Matthew', 'Sanchez', '2003-05-23', 'Nurse', 85000.00, '2024-08-23', 12, 15); -- 41
 
-INSERT INTO Qualification (name, provider, issued_date, holder) VALUES
+UPDATE Department SET manager_id = 4 WHERE name = 'Emergency';
+UPDATE Department SET manager_id = 5 WHERE name = 'Anaesthetics';
+UPDATE Department SET manager_id = 6 WHERE name = 'Surgery';
+UPDATE Department SET manager_id = 7 WHERE name = 'Laboratory';
+UPDATE Department SET manager_id = 8 WHERE name = 'Pediatrics';
+UPDATE Department SET manager_id = 9 WHERE name = 'Neurology';
+UPDATE Department SET manager_id = 10 WHERE name = 'Ophthalmology';
+UPDATE Department SET manager_id = 11 WHERE name = 'Otorhinolaryngology';
+UPDATE Department SET manager_id = 12 WHERE name = 'Cardiology';
+UPDATE Department SET manager_id = 13 WHERE name = 'Gastroenterology';
+UPDATE Department SET manager_id = 14 WHERE name = 'Gynaecology';
+UPDATE Department SET manager_id = 15 WHERE name = 'Orthopedics';
+
+INSERT INTO Qualification (name, provider, issue_date, staff_id) VALUES
 -- Holders with two certifications
 ('MBA in Healthcare Management', 'Harvard Business School', '2005-05-20', 1),
 ('MSc in Clinical Psychology', 'University of Edinburgh', '2010-06-25', 1),
@@ -340,21 +351,6 @@ INSERT INTO Qualification (name, provider, issued_date, holder) VALUES
 ('Certified Healthcare Data Analyst', 'AAPC', '2023-02-14', 40),
 ('MSc in Health Informatics', 'University of Illinois', '2020-06-30', 41);
 
-
-UPDATE Department SET manager = 4 WHERE name = 'Emergency';
-UPDATE Department SET manager = 5 WHERE name = 'Anaesthetics';
-UPDATE Department SET manager = 6 WHERE name = 'Surgery';
-UPDATE Department SET manager = 7 WHERE name = 'Laboratory';
-UPDATE Department SET manager = 8 WHERE name = 'Pediatrics';
-UPDATE Department SET manager = 9 WHERE name = 'Neurology';
-UPDATE Department SET manager = 10 WHERE name = 'Ophthalmology';
-UPDATE Department SET manager = 11 WHERE name = 'Otorhinolaryngology';
-UPDATE Department SET manager = 12 WHERE name = 'Cardiology';
-UPDATE Department SET manager = 13 WHERE name = 'Gastroenterology';
-UPDATE Department SET manager = 14 WHERE name = 'Gynaecology';
-UPDATE Department SET manager = 15 WHERE name = 'Orthopedics';
-
-
 INSERT INTO Patient_Allergy (patient_id, allergy_id, severity) VALUES
 (1, 1, 'MILD'),
 (1, 5, 'CRITICAL'),
@@ -387,7 +383,7 @@ INSERT INTO Patient_Allergy (patient_id, allergy_id, severity) VALUES
 (20, 48, 'MILD'); 
 
 
-INSERT INTO Staff_Shift (staff_id, shift_id) VALUES
+INSERT INTO Shift_Staff (staffId, shiftId) VALUES
 -- Staff 1
 (1, 1), (1, 4), (1, 7), (1, 10), (1, 12), (1, 15), (1, 17), (1, 21),
 -- Staff 2
@@ -472,30 +468,30 @@ INSERT INTO Staff_Shift (staff_id, shift_id) VALUES
 (41, 2), (41, 6), (41, 8), (41, 11), (41, 14), (41, 17);
 
 
-INSERT INTO EmploymentHistory (change_type, prev_dept, new_dept, prev_salary, new_salary, prev_title, new_title, applied_date, staff) VALUES
-('Title Change', NULL, NULL, NULL, NULL, 'Doctor', 'Administrative Personnel', '2017-08-03', 1),
-('Department Transfer', 11, 1, NULL, NULL, NULL, NULL, '2019-09-02', 4),
-('Salary Change', NULL, NULL, 100000.00, 115000.00, NULL, NULL, '2021-08-04', 6),
-('Title Change', NULL, NULL, NULL, NULL, 'Nurse', 'Doctor', '2023-03-08', 27),
-('Salary Change', NULL, NULL, 44000.00, 62000.00, NULL, NULL, '2022-02-14', 31),
-('Department Transfer', 2, 4, NULL, NULL, NULL, NULL, '2024-08-05', 19),
-('Salary Change', NULL, NULL, 75000.00, 81000.00, NULL, NULL, '2024-08-07', 40),
-('Department Transfer', 6, 12, NULL, NULL, NULL, NULL, '2024-08-08', 38),
-('Title Change', NULL, NULL, NULL, NULL, 'Nurse', 'Doctor', '2024-08-09', 25),
-('Salary Change', NULL, NULL, 71000.00, 88000.00, NULL, NULL, '2024-08-10', 16);
+INSERT INTO EmploymentHistory (previous_department_id, current_department_id, previous_salary, current_salary, previous_job_title, current_job_title, applied_date, staff_id) VALUES
+(NULL, NULL, NULL, NULL, 'Doctor', 'Administrative Personnel', '2017-08-03', 1),
+(11, 1, NULL, NULL, NULL, NULL, '2019-09-02', 4),
+(NULL, NULL, 100000.00, 115000.00, NULL, NULL, '2021-08-04', 6),
+(NULL, NULL, NULL, NULL, 'Nurse', 'Doctor', '2023-03-08', 27),
+(NULL, NULL, 44000.00, 62000.00, NULL, NULL, '2022-02-14', 31),
+(2, 4, NULL, NULL, NULL, NULL, '2024-08-05', 19),
+(NULL, NULL, 75000.00, 81000.00, NULL, NULL, '2024-08-07', 40),
+(6, 12, NULL, NULL, NULL, NULL, '2024-08-08', 38),
+(NULL, NULL, NULL, NULL, 'Nurse', 'Doctor', '2024-08-09', 25),
+(NULL, NULL, 71000.00, 88000.00, NULL, NULL, '2024-08-10', 16);
 
-INSERT INTO Billing (amount, billing_date, due_date, payment_status) VALUES
-(720, '2020-01-15', '2020-02-13', 'PAID'),
-(3900, '2020-01-15', '2020-02-13', 'PAID'),
-(480, '2020-01-16', '2020-02-14', 'PAID');
+INSERT INTO TreatmentHistory(type, disease, visited_date, patient_id, has_completed) VALUES
+('OUTPATIENT', 'Migrane, Hypertension, Dizziness', '2020-01-15', 1, True),
+('INPATIENT', 'Heartattack, Nausea', '2020-01-15', 2, True),
+('OUTPATIENT', 'HP Virus, Digestive Disorder', '2020-01-16', 3, True);
 
-INSERT INTO TreatmentHistory(type, diseases, visited_date, patient, bill, has_completed) VALUES
-('OUTPATIENT', 'Migrane, Hypertension, Dizziness', '2020-01-15', 1, 1, True),
-('INPATIENT', 'Heartattack, Nausea', '2020-01-15', 2, 2, True),
-('OUTPATIENT', 'HP Virus, Digestive Disorder', '2020-01-16', 3, 3, True);
+INSERT INTO Billing (amount, billing_date, due_date, payment_status, patientId, treatment_history_id) VALUES
+(720, '2020-01-15', '2020-02-13', 'PAID', 1, 1),
+(4000, '2020-01-15', '2020-02-13', 'PAID', 2, 2),
+(480, '2020-01-16', '2020-02-14', 'PAID', 3, 3);
 
 -- Checkups: 100/Prescription: Med*Quant/Operations: 3000/Ultrasound: 400/Image scans+Lab: 80
-INSERT INTO Procedures (category, price, performer, patient, medicine, med_quantity, performed_date, history) VALUES
+INSERT INTO Procedures (category, price, staff_id, patient_id, medicineId, medicine_quantity, performed_date, treatment_history_id) VALUES
 ('Checkups', 100.00, 9, 1, NULL, NULL, '2020-01-15 10:29:58', 1),
 ('Prescription', 60.00, 21, 1, 16, 3, '2020-01-15 10:45:32', 1),
 ('Ultrasound', 400.00, 12, 1, NULL, NULL, '2020-01-15 11:11:11', 1),
@@ -506,10 +502,10 @@ INSERT INTO Procedures (category, price, performer, patient, medicine, med_quant
 ('Ultrasound', 400.00, 13, 3, NULL, NULL, '2020-01-16 16:11:11', 3),
 ('Lab', 80.00, 7, 3, NULL, NULL, '2020-01-16 17:02:19', 3);
 
-INSERT INTO Admission(status, admitted_date, discharged_date, room_type, price, history) VALUES
+INSERT INTO Admission(status, admitted_date, discharged_date, room_type, price, treatment_history_id) VALUES
 ('DISCHARGED', '2020-01-15', '2020-01-19', 'PREMIUM', 800.00, 2);
 
-INSERT INTO Appointment(start_time, end_time, purpose, status, patient, doctor) VALUES
+INSERT INTO Appointment(start_time, end_time, purpose, status, patient_id, staff_id) VALUES
 ('2024-08-27 15:00:00', '2024-08-27 17:00:00', 'Appendix Removal Consultation', 'COMPLETED', 20, 10),
 ('2024-08-29 10:00:00', '2024-08-28 12:00:00', 'Checkup', 'CANCELLED', 19, 15),
 ('2024-08-31 14:15:00', '2024-08-29 16:15:00', 'Consultation', 'BOOKED', 18, 21);
