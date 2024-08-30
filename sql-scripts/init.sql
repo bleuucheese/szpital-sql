@@ -3,11 +3,11 @@
 														Author: Nguyen Ha
 
 	A. CREATE DATABASE
-	B. DROP AND CREATE FUNCTIONS
-	C. DROP AND CREATE TABLE (INCLUDING CONSTRAINTS (FK , UNIQUE, DEFAULT, INDEXING, PARTITIONING))
-	D. CREATE STORE PROCEDURE
-	E. CREATE TRIGGER
-	F. DATA POPULATION
+	B. CREATE TABLES (INCLUDING CONSTRAINTS (FK , UNIQUE, DEFAULT, INDEXING, PARTITIONING))
+    C. SAMPLE DATA POPULATION
+	D. CREATE STORED PROCEDURES
+	E. CREATE TRIGGERS
+    F. CREATE FUNCTIONS
 	G. CREATE VIEWS
 
 NOTE:- 
@@ -28,22 +28,16 @@ NOTE:-
 /************************************************************************************************/
 --- A. CREATE DATABASE
 /************************************************************************************************/
-DROP DATABASE HospitalManagementSystem;
+DROP DATABASE IF EXISTS HospitalManagementSystem;
 CREATE DATABASE IF NOT EXISTS HospitalManagementSystem;
 
 /************************************************************************************************/
---- B. CREATE TRIGGERS
-/************************************************************************************************/
-
-
-/************************************************************************************************/
---- C. CREATE TABLES
+--- B. CREATE TABLES
 /************************************************************************************************/
 
 USE HospitalManagementSystem;
-
 -- Reset the database
--- Drop foreign key constraint if it exists
+-- Drop foreign key constraints if they exist
 SET @sql = IF(
     (SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE 
      WHERE TABLE_NAME = 'Staff' AND CONSTRAINT_NAME = 'fk_department' 
@@ -68,22 +62,22 @@ DEALLOCATE PREPARE stmt;
 
 -- Drop tables if they exist
 DROP TABLE IF EXISTS Patient_Allergy;
-DROP TABLE IF EXISTS Staff_Shift;
+DROP TABLE IF EXISTS Shift_Staff;
 DROP TABLE IF EXISTS Procedures;
 DROP TABLE IF EXISTS Admission;
+DROP TABLE IF EXISTS Billing;
 DROP TABLE IF EXISTS TreatmentHistory;
 DROP TABLE IF EXISTS Appointment;
 DROP TABLE IF EXISTS EmploymentHistory;
 DROP TABLE IF EXISTS Qualification;
 DROP TABLE IF EXISTS Shift;
 DROP TABLE IF EXISTS Medicine;
-DROP TABLE IF EXISTS Billing;
-DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS Address;
 DROP TABLE IF EXISTS Insurance;
+DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS Allergy;
+DROP TABLE IF EXISTS Department; 
 DROP TABLE IF EXISTS Staff;
-DROP TABLE IF EXISTS Department;
 
 CREATE TABLE Allergy (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -94,7 +88,7 @@ CREATE TABLE Allergy (
 
 CREATE TABLE Patient (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    cid VARCHAR(50) NOT NULL,
+    cid VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     dob DATE NOT NULL,
@@ -105,8 +99,8 @@ CREATE TABLE Patient (
 CREATE TABLE Insurance (
     code VARCHAR(50) PRIMARY KEY,
     expired_date DATE NOT NULL,
-    patient_id INT,
-    FOREIGN KEY (patient_id) REFERENCES Patient(id)
+    patient_id INT UNIQUE,  -- Enforcing one-to-one relationship with Patient
+    FOREIGN KEY (patient_id) REFERENCES Patient(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Address (
@@ -115,8 +109,8 @@ CREATE TABLE Address (
     ward VARCHAR(255) NOT NULL,
     district VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
-    patient_id INT,
-    FOREIGN KEY (patient_id) REFERENCES Patient(id)
+    patient_id INT UNIQUE,  -- Enforcing one-to-one relationship with Patient
+    FOREIGN KEY (patient_id) REFERENCES Patient(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Staff (
@@ -134,7 +128,7 @@ CREATE TABLE Staff (
 CREATE TABLE Department (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    manager_id INT
+    manager_id INT UNIQUE  -- Enforcing one-to-one relationship with Staff
 );
 
 CREATE TABLE Shift (
@@ -150,7 +144,7 @@ CREATE TABLE Qualification (
     provider VARCHAR(255) NOT NULL,
     issue_date DATE NOT NULL,
     staff_id INT,
-    FOREIGN KEY (staff_id) REFERENCES Staff(id)
+    FOREIGN KEY (staff_id) REFERENCES Staff(id) ON DELETE CASCADE
 );
 
 CREATE TABLE EmploymentHistory (
@@ -163,9 +157,9 @@ CREATE TABLE EmploymentHistory (
     current_job_title VARCHAR(255),
     applied_date DATE NOT NULL DEFAULT (CURRENT_DATE),
     staff_id INT,
-    FOREIGN KEY (staff_id) REFERENCES Staff(id),
-    FOREIGN KEY (previous_department_id) REFERENCES Department(id),
-    FOREIGN KEY (current_department_id) REFERENCES Department(id)
+    FOREIGN KEY (staff_id) REFERENCES Staff(id) ON DELETE CASCADE,
+    FOREIGN KEY (previous_department_id) REFERENCES Department(id) ON DELETE SET NULL,
+    FOREIGN KEY (current_department_id) REFERENCES Department(id) ON DELETE SET NULL
 );
 
 CREATE TABLE Medicine (
@@ -174,7 +168,6 @@ CREATE TABLE Medicine (
     effect TEXT,
     side_effect TEXT,
     price DECIMAL(10, 2) NOT NULL
-    -- quantity INT NOT NULL, -- get rid for simplicity, no inventory management
 );
 
 CREATE TABLE TreatmentHistory (
@@ -182,9 +175,9 @@ CREATE TABLE TreatmentHistory (
     type VARCHAR(255) NOT NULL CHECK (type IN ('INPATIENT', 'OUTPATIENT')) DEFAULT 'OUTPATIENT',
     disease TEXT,
     visited_date DATE NOT NULL DEFAULT (CURRENT_DATE),
-    has_completed BOOLEAN NOT NULL DEFAULT FALSE, -- when done print bill
+    has_completed BOOLEAN NOT NULL DEFAULT FALSE, -- When done print bill
     patient_id INT,
-    FOREIGN KEY (patient_id) REFERENCES Patient(id)
+    FOREIGN KEY (patient_id) REFERENCES Patient(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Billing (
@@ -195,8 +188,8 @@ CREATE TABLE Billing (
     payment_status VARCHAR(50) NOT NULL CHECK (payment_status IN ('UNPAID', 'PAID')),
     treatment_history_id INT,
     patientId INT,
-    FOREIGN KEY (treatment_history_id) REFERENCES TreatmentHistory(id),
-    FOREIGN KEY (patientId) REFERENCES Patient(id)
+    FOREIGN KEY (treatment_history_id) REFERENCES TreatmentHistory(id) ON DELETE CASCADE,
+    FOREIGN KEY (patientId) REFERENCES Patient(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Procedures (
@@ -209,10 +202,10 @@ CREATE TABLE Procedures (
     medicine_quantity INT,
     performed_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     treatment_history_id INT,
-    FOREIGN KEY (staff_id) REFERENCES Staff(id),
-    FOREIGN KEY (patient_id) REFERENCES Patient(id),
-    FOREIGN KEY (medicineId) REFERENCES Medicine(id),
-    FOREIGN KEY (treatment_history_id) REFERENCES TreatmentHistory(id)
+    FOREIGN KEY (staff_id) REFERENCES Staff(id) ON DELETE SET NULL,
+    FOREIGN KEY (patient_id) REFERENCES Patient(id) ON DELETE CASCADE,
+    FOREIGN KEY (medicineId) REFERENCES Medicine(id) ON DELETE SET NULL,
+    FOREIGN KEY (treatment_history_id) REFERENCES TreatmentHistory(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Admission (
@@ -221,9 +214,9 @@ CREATE TABLE Admission (
     admitted_date DATE NOT NULL DEFAULT (CURRENT_DATE),
     discharged_date DATE,
     room_type VARCHAR(50) NOT NULL CHECK (room_type IN ('STANDARD', 'PREMIUM')),
-    price DECIMAL(10, 2) NOT NULL, -- per day (DATE_DIFF), std: $100, prem: $200
+    price DECIMAL(10, 2) NOT NULL, -- Per day (DATE_DIFF), std: $100, prem: $200
     treatment_history_id INT,
-    FOREIGN KEY (treatment_history_id) REFERENCES TreatmentHistory(id)
+    FOREIGN KEY (treatment_history_id) REFERENCES TreatmentHistory(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Appointment (
@@ -234,8 +227,8 @@ CREATE TABLE Appointment (
     status VARCHAR(50) NOT NULL CHECK (status IN ('BOOKED', 'ONGOING', 'COMPLETED', 'CANCELLED')),
     patient_id INT,
     staff_id INT,
-    FOREIGN KEY (patient_id) REFERENCES Patient(id),
-    FOREIGN KEY (staff_id) REFERENCES Staff(id)
+    FOREIGN KEY (patient_id) REFERENCES Patient(id) ON DELETE CASCADE,
+    FOREIGN KEY (staff_id) REFERENCES Staff(id) ON DELETE SET NULL
 );
 
 CREATE TABLE Patient_Allergy (
@@ -243,27 +236,27 @@ CREATE TABLE Patient_Allergy (
     allergy_id INT,
     severity VARCHAR(50) CHECK (severity IN ('MILD', 'CRITICAL')),
     PRIMARY KEY (patient_id, allergy_id),
-    FOREIGN KEY (patient_id) REFERENCES Patient(id),
-    FOREIGN KEY (allergy_id) REFERENCES Allergy(id)
+    FOREIGN KEY (patient_id) REFERENCES Patient(id) ON DELETE CASCADE,
+    FOREIGN KEY (allergy_id) REFERENCES Allergy(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Shift_Staff (
     staffId INT,
     shiftId INT,
     PRIMARY KEY (staffId, shiftId),
-    FOREIGN KEY (staffId) REFERENCES Staff(id),
-    FOREIGN KEY (shiftId) REFERENCES Shift(id)
+    FOREIGN KEY (staffId) REFERENCES Staff(id) ON DELETE CASCADE,
+    FOREIGN KEY (shiftId) REFERENCES Shift(id) ON DELETE CASCADE
 );
 
 -- Avoid circular reference
 ALTER TABLE Staff
 ADD CONSTRAINT fk_department
-FOREIGN KEY (department_id) REFERENCES Department(id);
+FOREIGN KEY (department_id) REFERENCES Department(id) ON DELETE SET NULL;
 
 ALTER TABLE Staff
 ADD CONSTRAINT fk_manager
-FOREIGN KEY (manager_id) REFERENCES Staff(id);
+FOREIGN KEY (manager_id) REFERENCES Staff(id) ON DELETE SET NULL;
 
 ALTER TABLE Department
 ADD CONSTRAINT fk_deptmanager
-FOREIGN KEY (manager_id) REFERENCES Staff(id);
+FOREIGN KEY (manager_id) REFERENCES Staff(id) ON DELETE SET NULL;
