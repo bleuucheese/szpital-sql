@@ -383,16 +383,16 @@ INSERT INTO Billing (amount, billing_date, due_date, payment_status, patient_id,
 (480, '2020-01-16', '2020-02-14', 'PAID', 3, 3);
 
 -- Checkups: 100/Prescription: Med*Quant/Operations: 3000/Ultrasound: 400/Image scans+Lab: 80
-INSERT INTO Procedure (category, price, staff_id, patient_id, medicine_id, medicine_quantity, performed_date, treatment_history_id) VALUES
-('Checkups', 100.00, 9, 1, NULL, NULL, '2020-01-15 10:29:58', 1),
-('Prescription', 60.00, 21, 1, 16, 3, '2020-01-15 10:45:32', 1),
-('Ultrasound', 400.00, 12, 1, NULL, NULL, '2020-01-15 11:11:11', 1),
-('Lab', 80.00, 19, 1, NULL, NULL, '2020-01-15 13:00:25', 1),
-('Image scans', 80.00, 7, 1, NULL, NULL, '2020-01-15 13:37:56', 1),
-('Checkups', 100.00, 28, 2, NULL, NULL, '2020-01-15 18:05:04', 2),
-('Operations', 3100.00, 6, 2, 4, 1, '2020-01-15 18:20:00', 2),
-('Ultrasound', 400.00, 13, 3, NULL, NULL, '2020-01-16 16:11:11', 3),
-('Lab', 80.00, 7, 3, NULL, NULL, '2020-01-16 17:02:19', 3);
+INSERT INTO Procedure (category, price, staff_id, medicine_id, medicine_quantity, performed_date, treatment_history_id) VALUES
+('Checkups', 100.00, 9, NULL, NULL, '2020-01-15 10:29:58', 1),
+('Prescription', 60.00, 21, 16, 3, '2020-01-15 10:45:32', 1),
+('Ultrasound', 400.00, 12, NULL, NULL, '2020-01-15 11:11:11', 1),
+('Lab', 80.00, 19, NULL, NULL, '2020-01-15 13:00:25', 1),
+('Image scans', 80.00, 7, NULL, NULL, '2020-01-15 13:37:56', 1),
+('Checkups', 100.00, 28, NULL, NULL, '2020-01-15 18:05:04', 2),
+('Operations', 3100.00, 6, 4, 1, '2020-01-15 18:20:00', 2),
+('Ultrasound', 400.00, 13, NULL, NULL, '2020-01-16 16:11:11', 3),
+('Lab', 80.00, 7, NULL, NULL, '2020-01-16 17:02:19', 3);
 
 INSERT INTO Admission(status, admitted_date, discharged_date, room_type, price, treatment_history_id) VALUES
 ('DISCHARGED', '2020-01-15', '2020-01-19', 'PREMIUM', 800.00, 2);

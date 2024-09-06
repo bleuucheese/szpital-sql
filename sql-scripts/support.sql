@@ -98,3 +98,8 @@ SUBPARTITIONS 4 (
     PARTITION p_2023 VALUES LESS THAN (2024),
     PARTITION p_future VALUES LESS THAN MAXVALUE
 );
+
+/************************************************************************************************/
+-- CREATE STORED PROCEDURES
+/************************************************************************************************/
+-- Add a new patient
