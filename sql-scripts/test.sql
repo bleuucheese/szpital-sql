@@ -1,4 +1,3 @@
-use hospitalmanagementsystem;
 INSERT INTO Allergy (allergen, symptoms, category) VALUES
 -- Food allergens
 ('Balsam of Peru', 'Redness, swelling, itching, dermatitis reactions, stomatitis, cheilitis, pruritus, hand eczema, rhinitis, conjunctivitis, and blisters.', 'Food'),
@@ -220,51 +219,52 @@ INSERT INTO Department (name) VALUES
 ('Orthopedics');
 
 
-INSERT INTO Staff (first_name, last_name, dob, job_type, salary, hired_date, department_id, manager_id) VALUES
+INSERT INTO Staff (first_name, last_name, dob, job_type, salary, hired_date, manager_id) VALUES
 -- Administrative Personnel
-('Meredith', 'Grey', '1955-07-22', 'Administrative Personnel', 500000.00, '2017-01-01', 1, NULL), -- president
-('Shaun', 'Murphy', '1962-11-05', 'Administrative Personnel', 450000.00, '2017-03-15', 1, 1), -- vice president
-('Derek', 'Shepherd', '1960-02-15', 'Administrative Personnel', 380000.00, '2017-06-23', 1, 1), -- director
+('Meredith', 'Grey', '1955-07-22', 'Administrative Personnel', 500000.00, '2017-01-01', 1), -- president
+('Shaun', 'Murphy', '1962-11-05', 'Administrative Personnel', 450000.00, '2017-03-15', 1), -- vice president
+('Derek', 'Shepherd', '1960-02-15', 'Administrative Personnel', 380000.00, '2017-06-23', 1), -- director
 -- Doctors
-('Martin', 'Nevels', '1992-11-11', 'Doctor', 120000.00, '2018-01-01', 1, 3), -- 4
-('Christine', 'Yang', '1980-06-12', 'Doctor', 110000.00, '2018-06-12', 2, 3),
-('Emily', 'Davis', '1982-12-25', 'Doctor', 115000.00, '2018-09-25', 3, 3), -- 6
-('Joshua', 'Hansen', '1978-09-30', 'Doctor', 118000.00, '2018-10-30', 4, 3),
-('Sarah', 'Wilson', '1985-05-16', 'Doctor', 112000.00, '2018-12-16',5, 3), -- 8
-('David', 'Clark', '1983-08-08', 'Doctor', 119000.00, '2018-12-25', 6, 3),
-('Susan', 'Lewis', '1977-01-13', 'Doctor', 121000.00, '2018-12-31', 7, 3), -- 10
-('Paul', 'Walker', '1979-10-18', 'Doctor', 117000.00, '2019-01-18', 8, 3),
-('Nancy', 'Hall', '1984-04-21', 'Doctor', 113000.00, '2019-04-21', 9, 3),
-('Mark', 'Allen', '1986-11-29', 'Doctor', 116000.00, '2019-05-07', 10, 3), -- 13
-('Donna', 'Evans', '1975-08-22', 'Doctor', 85000.00, '2019-08-17', 11, 3),
-('Jason', 'Morris', '1977-10-06', 'Doctor', 82000.00, '2019-10-09', 12, 3), -- 15
-('Gordon', 'Ramsey', '1982-12-14', 'Doctor', 88000.00, '2019-11-07', 1, 4),
-('Joseph', 'Rivera', '1985-02-28', 'Doctor', 86000.00, '2019-11-20', 2, 5),
-('Betty', 'Robinson', '1979-04-17', 'Doctor', 83000.00, '2020-01-17', 3, 6), -- 18
-('Richard', 'Phillips', '1981-11-09', 'Doctor', 84500.00, '2020-02-09', 4, 7),
-('Barbara', 'Campbell', '1986-01-25', 'Doctor', 87500.00, '2020-04-25', 5, 8),
-('Christopher', 'Parker', '1978-07-31', 'Doctor', 89500.00, '2020-04-30', 6, 9), -- 21
-('Sandra', 'Young', '1980-03-13', 'Doctor', 87000.00, '2020-06-21', 7, 10),
-('Levi', 'Nguyen', '1996-12-21', 'Doctor', 87000.00, '2020-07-04', 8, 11),
-('Elizabeth', 'Stewart', '1984-09-21', 'Doctor', 87000.00, '2020-08-15', 9, 12), -- 24
-('Catherine', 'Young', '1990-02-14', 'Doctor', 65000.00, '2020-09-22', 10, 13),
-('Brian', 'King', '1988-07-09', 'Doctor', 63000.00, '2020-10-10', 11, 14),
-('Jessica', 'Scott', '1992-12-03', 'Doctor', 67000.00, '2021-12-03', 12, 15), -- 27
+('Martin', 'Nevels', '1992-11-11', 'Doctor', 120000.00, '2018-01-01', 3), -- 4
+('Christine', 'Yang', '1980-06-12', 'Doctor', 110000.00, '2018-06-12', 3),
+('Emily', 'Davis', '1982-12-25', 'Doctor', 115000.00, '2018-09-25', 3), -- 6
+('Joshua', 'Hansen', '1978-09-30', 'Doctor', 118000.00, '2018-10-30', 3),
+('Sarah', 'Wilson', '1985-05-16', 'Doctor', 112000.00, '2018-12-16', 3), -- 8
+('David', 'Clark', '1983-08-08', 'Doctor', 119000.00, '2018-12-25', 3),
+('Susan', 'Lewis', '1977-01-13', 'Doctor', 121000.00, '2018-12-31', 3), -- 10
+('Paul', 'Walker', '1979-10-18', 'Doctor', 117000.00, '2019-01-18', 3),
+('Nancy', 'Hall', '1984-04-21', 'Doctor', 113000.00, '2019-04-21', 3),
+('Mark', 'Allen', '1986-11-29', 'Doctor', 116000.00, '2019-05-07', 3), -- 13
+('Donna', 'Evans', '1975-08-22', 'Doctor', 85000.00, '2019-08-17', 3),
+('Jason', 'Morris', '1977-10-06', 'Doctor', 82000.00, '2019-10-09', 3), -- 15
+('Gordon', 'Ramsey', '1982-12-14', 'Doctor', 88000.00, '2019-11-07', 4),
+('Joseph', 'Rivera', '1985-02-28', 'Doctor', 86000.00, '2019-11-20', 5),
+('Betty', 'Robinson', '1979-04-17', 'Doctor', 83000.00, '2020-01-17', 6), -- 18
+('Richard', 'Phillips', '1981-11-09', 'Doctor', 84500.00, '2020-02-09', 7),
+('Barbara', 'Campbell', '1986-01-25', 'Doctor', 87500.00, '2020-04-25', 8),
+('Christopher', 'Parker', '1978-07-31', 'Doctor', 89500.00, '2020-04-30', 9), -- 21
+('Sandra', 'Young', '1980-03-13', 'Doctor', 87000.00, '2020-06-21', 10),
+('Levi', 'Nguyen', '1996-12-21', 'Doctor', 87000.00, '2020-07-04', 11),
+('Elizabeth', 'Stewart', '1984-09-21', 'Doctor', 87000.00, '2020-08-15', 12), -- 24
+('Catherine', 'Young', '1990-02-14', 'Doctor', 65000.00, '2020-09-22', 13),
+('Brian', 'King', '1988-07-09', 'Doctor', 63000.00, '2020-10-10', 14),
+('Jessica', 'Scott', '1992-12-03', 'Doctor', 67000.00, '2021-12-03', 15), -- 27
 -- Nurses
-('Steven', 'Spielberg', '1991-04-27', 'Nurse', 64000.00, '2018-04-27', 1, 4),
-('Melissa', 'Adams', '1987-09-05', 'Nurse', 68000.00, '2019-09-05', 2, 5),
-('Kevin', 'Nelson', '1989-01-20', 'Nurse', 66000.00, '2020-01-20', 3, 6),
-('Patricia', 'Carter', '1983-06-30', 'Nurse', 62000.00, '2021-06-30', 4, 7), -- 31
-('George', 'Mitchell', '1986-08-19', 'Nurse', 64500.00, '2022-08-19', 5, 8),
-('Laura', 'Perez', '1984-03-11', 'Nurse', 67000.00, '2023-03-11', 6, 9),
-('Frank', 'Roberts', '1993-05-18', 'Nurse', 65500.00, '2023-05-18', 7, 10),
-('Anthony', 'Cook', '1980-06-07', 'Nurse', 81500.00, '2023-06-07', 8, 11),
-('Daniel', 'Collins', '1973-02-02', 'Nurse', 88000.00, '2023-11-02', 8, 11), -- 36
-('Michelle', 'Ward', '1974-03-10', 'Nurse', 83000.00, '2024-01-22', 9, 12),
-('Thomas', 'Bailey', '1969-11-14', 'Nurse', 89000.00, '2024-03-30', 9, 12),
-('Sheldon', 'Cooper', '1972-07-27', 'Nurse', 81000.00, '2024-07-05', 10, 13),
-('Missy', 'Sippy', '1999-07-27', 'Nurse', 81000.00, '2024-07-27', 11, 14),
-('Matthew', 'Sanchez', '2003-05-23', 'Nurse', 85000.00, '2024-08-23', 12, 15); -- 41
+('Steven', 'Spielberg', '1991-04-27', 'Nurse', 64000.00, '2018-04-27', 4),
+('Melissa', 'Adams', '1987-09-05', 'Nurse', 68000.00, '2019-09-05', 5),
+('Kevin', 'Nelson', '1989-01-20', 'Nurse', 66000.00, '2020-01-20', 6),
+('Patricia', 'Carter', '1983-06-30', 'Nurse', 62000.00, '2021-06-30', 7), -- 31
+('George', 'Mitchell', '1986-08-19', 'Nurse', 64500.00, '2022-08-19', 8),
+('Laura', 'Perez', '1984-03-11', 'Nurse', 67000.00, '2023-03-11', 9),
+('Frank', 'Roberts', '1993-05-18', 'Nurse', 65500.00, '2023-05-18', 10),
+('Anthony', 'Cook', '1980-06-07', 'Nurse', 81500.00, '2023-06-07', 11),
+('Daniel', 'Collins', '1973-02-02', 'Nurse', 88000.00, '2023-11-02', 11), -- 36
+('Michelle', 'Ward', '1974-03-10', 'Nurse', 83000.00, '2024-01-22', 12),
+('Thomas', 'Bailey', '1969-11-14', 'Nurse', 89000.00, '2024-03-30', 12),
+('Sheldon', 'Cooper', '1972-07-27', 'Nurse', 81000.00, '2024-07-05', 13),
+('Missy', 'Sippy', '1999-07-27', 'Nurse', 81000.00, '2024-07-27', 14),
+('Matthew', 'Sanchez', '2003-05-23', 'Nurse', 85000.00, '2024-08-23', 15); -- 41
+
 
 UPDATE Department SET manager_id = 4 WHERE name = 'Emergency';
 UPDATE Department SET manager_id = 5 WHERE name = 'Anaesthetics';
@@ -376,7 +376,7 @@ INSERT INTO TreatmentHistory(type, disease, visited_date, patient_id) VALUES
 ('INPATIENT', 'Heartattack, Nausea', '2020-01-15', 2),
 ('OUTPATIENT', 'HP Virus, Digestive Disorder', '2020-01-16', 3);
 
-INSERT INTO Billing (amount, billing_date, due_date, payment_status, patientId, treatment_history_id) VALUES
+INSERT INTO Billing (amount, billing_date, due_date, payment_status, patient_id, treatment_history_id) VALUES
 (720, '2020-01-15', '2020-02-13', 'PAID', 1, 1),
 (4000, '2020-01-15', '2020-02-13', 'PAID', 2, 2),
 (480, '2020-01-16', '2020-02-14', 'PAID', 3, 3);
