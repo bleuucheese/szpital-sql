@@ -221,6 +221,12 @@ BEGIN
 END;
 
 
+select * from Shift where day_of_week LIKE (SELECT DATE_FORMAT(curdate(), '%a'));
+select first_name, last_name, day_of_week, start_hour, end_hour 
+FROM shift_staff ss, staff st, shift sh
+WHERE ss.shiftId = sh.id AND ss.staffId = st.id AND sh.id IN (select id from Shift where day_of_week LIKE (SELECT DATE_FORMAT(curdate(), '%a')));
+
+
 
 -- Use the function with a subquery
 SELECT id, fname, lname, dob, job_type, fn_CalculateAge(DOB) AS Age

@@ -1,4 +1,4 @@
-use test2908;
+use hospitalmanagementsystem;
 INSERT INTO Allergy (allergen, symptoms, category) VALUES
 -- Food allergens
 ('Balsam of Peru', 'Redness, swelling, itching, dermatitis reactions, stomatitis, cheilitis, pruritus, hand eczema, rhinitis, conjunctivitis, and blisters.', 'Food'),
@@ -246,9 +246,9 @@ INSERT INTO Department (name) VALUES
 
 INSERT INTO Staff (first_name, last_name, dob, job_type, salary, hired_date, department_id, manager_id) VALUES
 -- Administrative Personnel
-('Meredith', 'Grey', '1955-07-22', 'Administrative Personnel', 500000.00, '2017-01-01', NULL, NULL), -- president
-('Shaun', 'Murphy', '1962-11-05', 'Administrative Personnel', 450000.00, '2017-03-15', NULL, 1), -- vice president
-('Derek', 'Shepherd', '1960-02-15', 'Administrative Personnel', 380000.00, '2017-06-23', NULL, 1), -- director
+('Meredith', 'Grey', '1955-07-22', 'Administrative Personnel', 500000.00, '2017-01-01', 1, NULL), -- president
+('Shaun', 'Murphy', '1962-11-05', 'Administrative Personnel', 450000.00, '2017-03-15', 1, 1), -- vice president
+('Derek', 'Shepherd', '1960-02-15', 'Administrative Personnel', 380000.00, '2017-06-23', 1, 1), -- director
 -- Doctors
 ('Martin', 'Nevels', '1992-11-11', 'Doctor', 120000.00, '2018-01-01', 1, 3), -- 4
 ('Christine', 'Yang', '1980-06-12', 'Doctor', 110000.00, '2018-06-12', 2, 3),
@@ -469,21 +469,26 @@ INSERT INTO Shift_Staff (staffId, shiftId) VALUES
 
 
 INSERT INTO EmploymentHistory (previous_department_id, current_department_id, previous_salary, current_salary, previous_job_title, current_job_title, applied_date, staff_id) VALUES
-(NULL, NULL, NULL, NULL, 'Doctor', 'Administrative Personnel', '2017-08-03', 1),
-(11, 1, NULL, NULL, NULL, NULL, '2019-09-02', 4),
-(NULL, NULL, 100000.00, 115000.00, NULL, NULL, '2021-08-04', 6),
-(NULL, NULL, NULL, NULL, 'Nurse', 'Doctor', '2023-03-08', 27),
-(NULL, NULL, 44000.00, 62000.00, NULL, NULL, '2022-02-14', 31),
-(2, 4, NULL, NULL, NULL, NULL, '2024-08-05', 19),
-(NULL, NULL, 75000.00, 81000.00, NULL, NULL, '2024-08-07', 40),
-(6, 12, NULL, NULL, NULL, NULL, '2024-08-08', 38),
-(NULL, NULL, NULL, NULL, 'Nurse', 'Doctor', '2024-08-09', 25),
-(NULL, NULL, 71000.00, 88000.00, NULL, NULL, '2024-08-10', 16);
+(1, 1, 250000, 500000, 'Doctor', 'Administrative Personnel', '2017-08-03', 1),
+(11, 1, 120000, 120000, 'Doctor', 'Doctor', '2019-09-02', 4),
+(1, 1, 100000.00, 115000.00, 'Doctor', 'Doctor', '2021-08-04', 6),
+(12, 12, 56000, 67000, 'Nurse', 'Doctor', '2023-03-08', 27),
+(4, 4, 44000.00, 62000.00, 'Nurse', 'Nurse', '2022-02-14', 31),
+(2, 4, 84500, 84500, 'Doctor', 'Doctor', '2024-08-05', 19),
+(11, 11, 75000.00, 81000.00, 'Nurse', 'Nurse', '2024-08-07', 40),
+(6, 9, 89000, 89000, 'Nurse', 'Nurse', '2024-08-08', 38),
+(10, 10, 42000, 65000, 'Nurse', 'Doctor', '2024-08-09', 25),
+(1, 1, 71000.00, 88000.00, 'Doctor', 'Doctor', '2024-08-10', 16);
 
 INSERT INTO TreatmentHistory(type, disease, visited_date, patient_id, has_completed) VALUES
 ('OUTPATIENT', 'Migrane, Hypertension, Dizziness', '2020-01-15', 1, True),
 ('INPATIENT', 'Heartattack, Nausea', '2020-01-15', 2, True),
 ('OUTPATIENT', 'HP Virus, Digestive Disorder', '2020-01-16', 3, True);
+
+INSERT INTO TreatmentHistory(type, disease, visited_date, patient_id) VALUES
+('OUTPATIENT', 'Migrane, Hypertension, Dizziness', '2020-01-15', 1),
+('INPATIENT', 'Heartattack, Nausea', '2020-01-15', 2),
+('OUTPATIENT', 'HP Virus, Digestive Disorder', '2020-01-16', 3);
 
 INSERT INTO Billing (amount, billing_date, due_date, payment_status, patientId, treatment_history_id) VALUES
 (720, '2020-01-15', '2020-02-13', 'PAID', 1, 1),
