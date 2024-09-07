@@ -76,41 +76,13 @@ SELECT a.id AS appointment_id, p.first_name, p.last_name, a.start_time, a.end_ti
 FROM Appointment a
 JOIN Patient p ON a.patient_id = p.id;
 
--- Procedure for Admins to add new patients
-CREATE PROCEDURE AddNewPatient(
-    IN cid VARCHAR(50),
-    IN first_name VARCHAR(255),
-    IN last_name VARCHAR(255),
-    IN dob DATE,
-    IN gender VARCHAR(10),
-    IN blood_type VARCHAR(10),
-    IN insurance VARCHAR(50),
-    IN address_id INT
-)
-BEGIN
-    INSERT INTO Patient (cid, first_name, last_name, dob, gender, blood_type, insurance, address)
-    VALUES (cid, first_name, last_name, dob, gender, blood_type, insurance, address_id);
-END;
-
--- Procedure for Doctors to update treatment history
-CREATE PROCEDURE UpdateTreatmentHistory(
-    IN treatment_id INT,
-    IN disease TEXT,
-    IN has_completed BOOLEAN
-)
-BEGIN
-    UPDATE TreatmentHistory
-    SET disease = disease, has_completed = has_completed
-    WHERE id = treatment_id;
-END;
-
 -- Grant permissions on views to roles
 GRANT SELECT ON DoctorPatientTreatmentView TO doctor_role;
 GRANT SELECT, UPDATE ON ClerkAppointmentView TO clerk_role;
 
 -- Grant execution rights on stored procedures
-GRANT EXECUTE ON PROCEDURE AddNewPatient TO admin_role;
-GRANT EXECUTE ON PROCEDURE UpdateTreatmentHistory TO doctor_role;
+GRANT EXECUTE ON PROCEDURE InsertNewPatient TO admin_role;
+GRANT EXECUTE ON PROCEDURE InsertNewPatient TO clerk_role;
 
 -- Procedure to handle patient record access based on role
 CREATE PROCEDURE AccessPatientRecord(IN patient_id INT)
@@ -126,7 +98,3 @@ END;
 
 -- Grant execute permissions
 GRANT EXECUTE ON PROCEDURE AccessPatientRecord TO doctor_role, patient_role;
-
-
--- PROCEDURE ADD A NEW PROCEDURE
-BEFORE ADDING A VERY FIRST PROCEDURE FOR A PATIENT, CREATE A NEW TREATMENT HISTORY RECORD FOR THE PATIENT

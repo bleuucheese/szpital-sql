@@ -65,25 +65,25 @@ INSERT INTO Allergy (allergen, symptoms, category) VALUES
 INSERT INTO Shift (day_of_week, start_hour, end_hour) VALUES
 ('MON', '06:00:00', '14:00:00'),
 ('MON', '14:00:00', '22:00:00'),
-('MON', '22:00:00', '06:00:00'),
+('MON', '22:00:00', '23:59:00'),
 ('TUE', '06:00:00', '14:00:00'),
 ('TUE', '14:00:00', '22:00:00'),
-('TUE', '22:00:00', '06:00:00'),
+('TUE', '22:00:00', '23:59:00'),
 ('WED', '06:00:00', '14:00:00'),
 ('WED', '14:00:00', '22:00:00'),
-('WED', '22:00:00', '06:00:00'),
+('WED', '22:00:00', '23:59:00'),
 ('THU', '06:00:00', '14:00:00'),
 ('THU', '14:00:00', '22:00:00'),
-('THU', '22:00:00', '06:00:00'),
+('THU', '22:00:00', '23:59:00'),
 ('FRI', '06:00:00', '14:00:00'),
 ('FRI', '14:00:00', '22:00:00'),
-('FRI', '22:00:00', '06:00:00'),
+('FRI', '22:00:00', '23:59:00'),
 ('SAT', '06:00:00', '14:00:00'),
 ('SAT', '14:00:00', '22:00:00'),
-('SAT', '22:00:00', '06:00:00'),
+('SAT', '22:00:00', '23:59:00'),
 ('SUN', '06:00:00', '14:00:00'),
 ('SUN', '14:00:00', '22:00:00'),
-('SUN', '22:00:00', '06:00:00');
+('SUN', '22:00:00', '23:59:00');
 
 
 INSERT INTO Medicine (name, effect, side_effect, price) VALUES
@@ -484,11 +484,6 @@ INSERT INTO TreatmentHistory(type, disease, visited_date, patient_id, has_comple
 ('OUTPATIENT', 'Migrane, Hypertension, Dizziness', '2020-01-15', 1, True),
 ('INPATIENT', 'Heartattack, Nausea', '2020-01-15', 2, True),
 ('OUTPATIENT', 'HP Virus, Digestive Disorder', '2020-01-16', 3, True);
-
-INSERT INTO TreatmentHistory(type, disease, visited_date, patient_id) VALUES
-('OUTPATIENT', 'Migrane, Hypertension, Dizziness', '2020-01-15', 1),
-('INPATIENT', 'Heartattack, Nausea', '2020-01-15', 2),
-('OUTPATIENT', 'HP Virus, Digestive Disorder', '2020-01-16', 3);
 
 INSERT INTO Billing (amount, billing_date, due_date, payment_status, patientId, treatment_history_id) VALUES
 (720, '2020-01-15', '2020-02-13', 'PAID', 1, 1),
