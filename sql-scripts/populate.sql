@@ -507,5 +507,5 @@ INSERT INTO Admission(status, admitted_date, discharged_date, room_type, price, 
 
 INSERT INTO Appointment(start_time, end_time, purpose, status, patient_id, staff_id) VALUES
 ('2024-08-27 15:00:00', '2024-08-27 17:00:00', 'Appendix Removal Consultation', 'COMPLETED', 20, 10),
-('2024-08-29 10:00:00', '2024-08-28 12:00:00', 'Checkup', 'CANCELLED', 19, 15),
+('2024-08-28 10:00:00', '2024-08-28 12:00:00', 'Checkup', 'CANCELLED', 19, 15),
 ('2024-08-31 14:15:00', '2024-08-29 16:15:00', 'Consultation', 'BOOKED', 18, 21);

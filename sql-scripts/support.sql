@@ -402,8 +402,6 @@ END $$
 DELIMITER ;
 
 
-
-
 -- Add a new procedure
 DELIMITER $$
 CREATE PROCEDURE AddProcedure(
@@ -615,6 +613,496 @@ END $$
 
 DELIMITER ;
 
+-- List staff members by department
+DELIMITER $$
+
+CREATE PROCEDURE ListStaffByDepartment(
+    IN p_department_id INT,
+    IN p_department_name VARCHAR(255)
+)
+BEGIN
+    -- Check if the department name is provided, if so, retrieve based on department name
+    IF p_department_name IS NOT NULL THEN
+        SELECT s.id, s.first_name, s.last_name, s.job_type, d.name AS department_name
+        FROM Staff s
+        JOIN Department d ON s.department_id = d.id
+        WHERE d.name = p_department_name;
+
+    -- Otherwise, retrieve based on department ID
+    ELSEIF p_department_id IS NOT NULL THEN
+        SELECT s.id, s.first_name, s.last_name, s.job_type, d.name AS department_name
+        FROM Staff s
+        JOIN Department d ON s.department_id = d.id
+        WHERE d.id = p_department_id;
+
+    -- If neither is provided, return an error message
+    ELSE
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Either department name or department ID must be provided.';
+    END IF;
+    
+END $$
+
+DELIMITER ;
+
+-- List staff members by order of names
+DELIMITER $$
+
+CREATE PROCEDURE ListStaffNames(
+    IN sort_order VARCHAR(4)  -- Accept 'ASC' or 'DESC' as the sort order
+)
+BEGIN
+    SET @query = CONCAT('SELECT * FROM Staff ORDER BY last_name ', sort_order, ', first_name ', sort_order);
+    PREPARE stmt FROM @query;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+END $$
+
+DELIMITER ;
+
+-- View a staff schedule
+DELIMITER $$
+
+CREATE PROCEDURE ViewStaffScheduleById(
+    IN p_staff_id INT
+)
+BEGIN
+    SELECT
+        s.id AS staff_id,
+        CONCAT(
+            'Day: ', sh.day_of_week, 
+            ', Start: ', sh.start_hour, 
+            ', End: ', sh.end_hour
+        ) AS working_hours
+    FROM
+        shift_staff ss
+    JOIN
+        Shift sh ON ss.shiftId = sh.id
+    JOIN
+        Staff s ON ss.staffId = s.id
+    WHERE
+        s.id = p_staff_id
+    ORDER BY
+        sh.day_of_week, sh.start_hour;
+END $$
+
+DELIMITER ;
+
+-- Add new shift for a staff
+DELIMITER $$
+
+CREATE PROCEDURE AddShiftForStaff(
+    IN p_staff_id INT,
+    IN p_day_of_week VARCHAR(10),
+    IN p_start_time TIME,
+    IN p_end_time TIME
+)
+BEGIN
+    DECLARE new_shift_id INT;
+
+    -- Start the transaction
+    START TRANSACTION;
+
+    -- Step 1: Insert the new shift into the Shift table
+    INSERT INTO Shift (day_of_week, start_hour, end_hour)
+    VALUES (p_day_of_week, p_start_time, p_end_time);
+
+    -- Step 2: Get the last inserted shift ID
+    SET new_shift_id = LAST_INSERT_ID();
+
+    -- Step 3: Associate the new shift with the staff in the Shift_Staff table
+    INSERT INTO Shift_Staff (staffId, shiftId)
+    VALUES (p_staff_id, new_shift_id);
+
+    -- Commit the transaction if everything is successful
+    COMMIT;
+
+END $$
+
+DELIMITER ;
+
+-- Update staff shifts
+DELIMITER $$
+
+CREATE PROCEDURE DeleteShiftForStaff(
+    IN p_staff_id INT,
+    IN p_shift_id INT
+)
+BEGIN
+    DECLARE conflicting_appointment INT DEFAULT 0;
+    DECLARE current_day_of_week INT;
+    DECLARE shift_start TIME;
+    DECLARE shift_end TIME;
+    DECLARE shift_day VARCHAR(10);
+
+    -- Start the transaction
+    START TRANSACTION;
+
+    -- Step 1: Get the shift details (start time, end time, and day of the week)
+    SELECT start_hour, end_hour, day_of_week
+    INTO shift_start, shift_end, shift_day
+    FROM Shift
+    WHERE id = p_shift_id;
+
+    -- Convert p_day_of_week to numeric equivalent using WEEKDAY (Monday = 0, Sunday = 6)
+    SET current_day_of_week = CASE 
+                                WHEN shift_day = 'MON' THEN 0
+                                WHEN shift_day = 'TUE' THEN 1
+                                WHEN shift_day = 'WED' THEN 2
+                                WHEN shift_day = 'THU' THEN 3
+                                WHEN shift_day = 'FRI' THEN 4
+                                WHEN shift_day = 'SAT' THEN 5
+                                WHEN shift_day = 'SUN' THEN 6
+                             END;
+
+    -- Step 2: Check if there is a conflicting appointment (BOOKED or ONGOING) for the staff
+    SELECT COUNT(*)
+    INTO conflicting_appointment
+    FROM Appointment
+    WHERE staff_id = p_staff_id
+    AND status IN ('BOOKED', 'ONGOING')
+    AND WEEKDAY(start_time) = current_day_of_week
+    AND (TIME(start_time) < shift_end AND TIME(end_time) > shift_start);
+
+    -- Step 3: If there is a conflicting appointment, roll back the transaction and exit
+    IF conflicting_appointment > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot delete shift: Conflicting appointment exists during the shift time.';
+        ROLLBACK;
+    ELSE
+        -- Step 4: Delete the old shift-staff record
+        DELETE FROM Shift_Staff
+        WHERE staffId = p_staff_id AND shiftId = p_shift_id;
+
+        -- Step 5: Optionally, delete the shift from the Shift table if needed
+        DELETE FROM Shift WHERE id = p_shift_id;
+
+        -- Commit the transaction if everything is successful
+        COMMIT;
+    END IF;
+
+END $$
+
+DELIMITER ;
+
+-- View doctors schedule
+DELIMITER $$
+
+CREATE PROCEDURE ViewAllDoctorsSchedule(
+    IN p_start_date DATE,  -- Start date of the duration
+    IN p_end_date DATE     -- End date of the duration
+)
+BEGIN
+    -- Select the working schedule of all doctors, including busy/available status for each shift
+    SELECT 
+        s.id AS staff_id,
+        CONCAT(s.first_name, ' ', s.last_name) AS doctor_name,
+        sh.day_of_week AS working_day,
+        sh.start_hour AS shift_start,
+        sh.end_hour AS shift_end,
+        IFNULL(
+            GROUP_CONCAT(
+                CONCAT(
+                    'Busy on ', 
+                    DATE(a.start_time), 
+                    ' from ', 
+                    TIME(a.start_time), 
+                    ' to ', 
+                    TIME(a.end_time), 
+                    ' - ', 
+                    IFNULL(a.purpose, 'No purpose provided')
+                ) ORDER BY a.start_time SEPARATOR '; '
+            ),
+            'Available'
+        ) AS availability_status
+    FROM 
+        Staff s
+    JOIN 
+        Shift_Staff ss ON s.id = ss.staffId
+    JOIN 
+        Shift sh ON ss.shiftId = sh.id
+    LEFT JOIN 
+        Appointment a ON a.staff_id = s.id 
+        AND a.start_time BETWEEN p_start_date AND p_end_date 
+        AND WEEKDAY(a.start_time) = CASE 
+            WHEN sh.day_of_week = 'MON' THEN 0
+            WHEN sh.day_of_week = 'TUE' THEN 1
+            WHEN sh.day_of_week = 'WED' THEN 2
+            WHEN sh.day_of_week = 'THU' THEN 3
+            WHEN sh.day_of_week = 'FRI' THEN 4
+            WHEN sh.day_of_week = 'SAT' THEN 5
+            WHEN sh.day_of_week = 'SUN' THEN 6
+        END -- Compare appointment day to shift day
+        AND TIME(a.start_time) < sh.end_hour 
+        AND TIME(a.end_time) > sh.start_hour
+        AND a.status IN ('BOOKED', 'ONGOING')
+    WHERE 
+        s.job_type = 'Doctor'   -- Only select doctors
+    GROUP BY 
+        s.id, sh.day_of_week, sh.start_hour, sh.end_hour
+    ORDER BY 
+        s.id, sh.day_of_week, sh.start_hour;
+
+END $$
+
+DELIMITER ;
+
+-- Book an appointment
+DELIMITER $$
+
+CREATE PROCEDURE BookAppointment(
+    IN p_patient_id INT,
+    IN p_staff_id INT,
+    IN p_start_time DATETIME,
+    IN p_end_time DATETIME,
+    IN p_purpose VARCHAR(255)
+)
+BEGIN
+    DECLARE conflicting_appointments INT DEFAULT 0;
+    DECLARE shift_available INT DEFAULT 0;
+    DECLARE current_day_of_week VARCHAR(10);
+
+    -- Start the transaction
+    START TRANSACTION;
+
+    -- Step 1: Get the day of the week for the appointment (e.g., 'MON', 'TUE', etc.)
+    SET current_day_of_week = (SELECT DATE_FORMAT(p_start_time, '%a'));
+
+    -- Step 2: Check if the doctor has a working shift that matches the appointment day and time
+    SELECT COUNT(*) INTO shift_available
+    FROM Shift sh
+    JOIN Shift_Staff ss ON ss.shiftId = sh.id
+    WHERE ss.staffId = p_staff_id
+    AND sh.day_of_week = current_day_of_week
+    AND TIME(p_start_time) >= sh.start_hour
+    AND TIME(p_end_time) <= sh.end_hour;
+
+    -- If the doctor is not available in the shift during the requested time, rollback and signal error
+    IF shift_available = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'The doctor is not available during this time (outside of working hours).';
+        ROLLBACK;
+    ELSE
+        -- Step 3: Check if the doctor has any conflicting appointments in the given time slot
+        SELECT COUNT(*) INTO conflicting_appointments
+        FROM Appointment
+        WHERE staff_id = p_staff_id
+        AND (
+            (start_time < p_end_time AND end_time > p_start_time) -- Overlapping appointment
+        )
+        AND status IN ('BOOKED', 'ONGOING');
+
+        -- Step 4: If a conflicting appointment exists, rollback the transaction and signal an error
+        IF conflicting_appointments > 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'The doctor already has an appointment during this time slot.';
+            ROLLBACK;
+        ELSE
+            -- Step 5: Insert the new appointment if no conflicts exist and the shift matches
+            INSERT INTO Appointment (patient_id, staff_id, start_time, end_time, purpose, status)
+            VALUES (p_patient_id, p_staff_id, p_start_time, p_end_time, p_purpose, 'BOOKED');
+
+            -- Step 6: Commit the transaction if everything is successful
+            COMMIT;
+        END IF;
+    END IF;
+
+END $$
+
+DELIMITER ;
+
+-- Cancel an appointment
+DELIMITER $$
+
+CREATE PROCEDURE CancelAppointment(
+    IN p_appointment_id INT
+)
+BEGIN
+    DECLARE appointment_status VARCHAR(50);
+
+    -- Get the current status of the appointment
+    SELECT status INTO appointment_status
+    FROM Appointment
+    WHERE id = p_appointment_id;
+
+    -- Check if the status is 'COMPLETED', 'CANCELLED', or 'ONGOING'
+    IF appointment_status IN ('COMPLETED', 'CANCELLED', 'ONGOING') THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Appointment cannot be cancelled as it is already completed, cancelled, or in progress.';
+    ELSE
+        -- If status is 'BOOKED', update to 'CANCELLED'
+        UPDATE Appointment
+        SET status = 'CANCELLED'
+        WHERE id = p_appointment_id;
+    END IF;
+END $$
+
+DELIMITER ;
+
+-- Reports
+-- View all treatment history for a patient within a date range
+DELIMITER $$
+
+CREATE PROCEDURE GetPatientTreatmentHistoryWithBilling(
+    IN p_patient_id INT,
+    IN p_start_date DATE,
+    IN p_end_date DATE
+)
+BEGIN
+    -- Select treatment history for the patient and join with the billing table
+    SELECT 
+        th.id AS treatment_history_id,
+        th.type,
+        th.disease,
+        th.visited_date,
+        th.has_completed,
+        SUM(b.amount) AS total_billed_amount
+    FROM 
+        TreatmentHistory th
+    LEFT JOIN 
+        Billing b ON b.treatment_history_id = th.id
+    WHERE 
+        th.patient_id = p_patient_id
+        AND th.visited_date BETWEEN p_start_date AND p_end_date
+    GROUP BY 
+        th.id, th.type, th.disease, th.visited_date, th.has_completed;
+END $$
+
+DELIMITER ;
+
+
+-- List Procedures and Admissions for a Treatment History
+DELIMITER $$
+
+CREATE PROCEDURE GetTreatmentDetails(
+    IN p_treatment_history_id INT
+)
+BEGIN
+    -- Select details of procedures and admissions for the given treatment history ID
+    SELECT 
+        'Procedure' AS record_type,        -- Match with record_type column in the UNION
+        p.id AS record_id,                 -- Match with record_id
+        p.category AS detail,              -- Match with a generic column to hold either category or status
+        NULL AS admitted_date,             -- Placeholder for admitted_date in procedures
+        NULL AS discharged_date,           -- Placeholder for discharged_date in procedures
+        NULL AS room_type,                 -- Placeholder for room_type in procedures
+        p.price AS price,                  -- Match with price
+        p.performed_date AS action_date    -- Match with date field (performed/admitted)
+    FROM 
+        Procedures p
+    WHERE 
+        p.treatment_history_id = p_treatment_history_id
+
+    UNION ALL
+
+    SELECT 
+        'Admission' AS record_type,        -- Match with record_type
+        a.id AS record_id,                 -- Match with record_id
+        a.status AS detail,                -- Match with the generic detail field
+        a.admitted_date,                   -- Actual admitted_date from Admission
+        a.discharged_date,                 -- Actual discharged_date from Admission
+        a.room_type,                       -- Actual room_type from Admission
+        a.price AS price,                  -- Match with price
+        a.admitted_date AS action_date     -- Use admitted_date as the action_date for Admissions
+    FROM 
+        Admission a
+    WHERE 
+        a.treatment_history_id = p_treatment_history_id;
+END $$
+
+DELIMITER ;
+
+-- Job changes for a staff member
+DELIMITER $$
+
+CREATE PROCEDURE GetJobChangeHistory(
+    IN p_staff_id INT
+)
+BEGIN
+    -- Select job change history for a given staff member
+    SELECT 
+        eh.id AS employment_history_id,
+        s.first_name,
+        s.last_name,
+        eh.previous_department_id,
+        eh.current_department_id,
+        eh.previous_job_title,
+        eh.current_job_title,
+        eh.previous_salary,
+        eh.current_salary,
+        eh.applied_date
+    FROM 
+        EmploymentHistory eh
+    JOIN 
+        Staff s ON eh.staff_id = s.id
+    WHERE 
+        eh.staff_id = p_staff_id
+    ORDER BY 
+        eh.applied_date DESC;  -- Order by the most recent job change
+END $$
+
+DELIMITER ;
+
+-- List workload for all staff members in a given date range
+DELIMITER $$
+
+CREATE PROCEDURE ListProceduresForAllStaff(
+    IN p_start_date DATETIME,
+    IN p_end_date DATETIME
+)
+BEGIN
+    SELECT 
+        pr.id AS procedure_id,
+        s.id AS staff_id,
+        CONCAT(s.first_name, ' ', s.last_name) AS staff_name,
+        pr.category AS procedure_category,
+        pr.performed_date,
+        pr.medicine_quantity,
+        pr.price
+    FROM 
+        Procedures pr
+    JOIN 
+        Staff s ON pr.staff_id = s.id
+    WHERE 
+        pr.performed_date BETWEEN p_start_date AND p_end_date
+    ORDER BY 
+        pr.performed_date ASC;
+END $$
+
+DELIMITER ;
+
+
+
+-- List workload for a staff member in a given date range
+DELIMITER $$
+
+CREATE PROCEDURE ListProceduresForSpecificStaff(
+    IN p_staff_id INT,
+    IN p_start_date DATETIME,
+    IN p_end_date DATETIME
+)
+BEGIN
+    SELECT 
+        pr.id AS procedure_id,
+        CONCAT(s.first_name, ' ', s.last_name) AS staff_name,
+        pr.category AS procedure_category,
+        pr.performed_date,
+        pr.medicine_quantity,
+        pr.price
+    FROM 
+        Procedures pr
+    JOIN 
+        Staff s ON pr.staff_id = s.id
+    WHERE 
+        pr.staff_id = p_staff_id
+        AND pr.performed_date BETWEEN p_start_date AND p_end_date
+    ORDER BY 
+        pr.performed_date ASC;
+END $$
+
+DELIMITER ;
+
+
 /************************************************************************************************/
 -- CREATE TRIGGERS
 /************************************************************************************************/
@@ -715,5 +1203,104 @@ END $$
 
 DELIMITER ;
 
+-- Trigger to Switch from BOOKED to ONGOING When Start Time Passes
+DELIMITER $$
+
+CREATE TRIGGER SwitchToOngoingAppointment
+BEFORE UPDATE ON Appointment
+FOR EACH ROW
+BEGIN
+    -- If the appointment is still 'BOOKED' and the start time has passed, set it to 'ONGOING'
+    IF NEW.status = 'BOOKED' AND NEW.start_time <= NOW() THEN
+        SET NEW.status = 'ONGOING';
+    END IF;
+END $$
+
+DELIMITER ;
 
 
+DELIMITER $$
+
+CREATE TRIGGER UpdateAppointmentToCompleted
+BEFORE UPDATE ON Appointment
+FOR EACH ROW
+BEGIN
+    -- Check if the appointment's end_time is in the past and its status is still 'BOOKED' or 'ONGOING'
+    IF NEW.end_time < NOW() AND NEW.status IN ('BOOKED', 'ONGOING') THEN
+        SET NEW.status = 'COMPLETED';
+    END IF;
+END $$
+
+DELIMITER ;
+
+/************************************************************************************************/
+-- SET LOCKS (OPTIONAL)
+/************************************************************************************************/
+DELIMITER $$
+
+CREATE PROCEDURE BookAppointment2(
+    IN p_patient_id INT,
+    IN p_staff_id INT,
+    IN p_start_time DATETIME,
+    IN p_end_time DATETIME,
+    IN p_purpose VARCHAR(255)
+)
+BEGIN
+    DECLARE conflicting_appointments INT DEFAULT 0;
+    DECLARE shift_available INT DEFAULT 0;
+    DECLARE current_day_of_week VARCHAR(10);
+
+    -- Set the transaction isolation level to SERIALIZABLE to prevent race conditions
+    SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+    -- Start the transaction
+    START TRANSACTION;
+
+    -- Step 1: Get the day of the week for the appointment (e.g., 'MON', 'TUE', etc.)
+    SET current_day_of_week = (SELECT DATE_FORMAT(p_start_time, '%a'));
+
+    -- Step 2: Check if the doctor has a working shift that matches the appointment day and time
+    SELECT COUNT(*) INTO shift_available
+    FROM Shift sh
+    JOIN Shift_Staff ss ON ss.shiftId = sh.id
+    WHERE ss.staffId = p_staff_id
+    AND sh.day_of_week = current_day_of_week
+    AND TIME(p_start_time) >= sh.start_hour
+    AND TIME(p_end_time) <= sh.end_hour;
+
+    -- If the doctor is not available in the shift during the requested time, rollback and signal error
+    IF shift_available = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'The doctor is not available during this time (outside of working hours).';
+        ROLLBACK;
+    ELSE
+        -- Step 3: Check if the doctor has any conflicting appointments in the given time slot
+        SELECT COUNT(*) INTO conflicting_appointments
+        FROM Appointment
+        WHERE staff_id = p_staff_id
+        AND (
+            (start_time < p_end_time AND end_time > p_start_time) -- Overlapping appointment
+        )
+        AND status IN ('BOOKED', 'ONGOING');
+
+        -- Step 4: If a conflicting appointment exists, rollback the transaction and signal an error
+        IF conflicting_appointments > 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'The doctor already has an appointment during this time slot.';
+            ROLLBACK;
+        ELSE
+            -- Step 5: Insert the new appointment if no conflicts exist and the shift matches
+            INSERT INTO Appointment (patient_id, staff_id, start_time, end_time, purpose, status)
+            VALUES (p_patient_id, p_staff_id, p_start_time, p_end_time, p_purpose, 'BOOKED');
+
+            -- Step 6: Commit the transaction if everything is successful
+            COMMIT;
+        END IF;
+    END IF;
+
+    -- Reset the transaction isolation level to default (optional)
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+END $$
+
+DELIMITER ;

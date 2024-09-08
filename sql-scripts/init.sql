@@ -228,8 +228,10 @@ CREATE TABLE Appointment (
     patient_id INT,
     staff_id INT,
     FOREIGN KEY (patient_id) REFERENCES Patient(id) ON DELETE CASCADE,
-    FOREIGN KEY (staff_id) REFERENCES Staff(id) ON DELETE SET NULL
+    FOREIGN KEY (staff_id) REFERENCES Staff(id) ON DELETE SET NULL,
+    CHECK (end_time > start_time)  -- Ensure that end_time is after start_time
 );
+
 
 CREATE TABLE Patient_Allergy (
     patient_id INT,

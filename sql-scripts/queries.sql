@@ -46,47 +46,128 @@ CALL SearchPatient ('NAME', NULL, 'Kevin', 'Darroyo');
 CALL SearchPatient ('ID', 7, NULL, NULL);
 
 -- Check staff availability
-CALL CheckStaffAvailability (1, '2024-09-07 08:00:00', '2024-09-07 08:23:00'); -- 0
+CALL CheckStaffAvailability (1, '2024-09-07 08:00:00', '2024-09-07 08:23:00');
 
-CALL CheckStaffAvailability (1, '2024-09-07 21:59:00', '2024-09-07 22:00:00'); -- 1
+-- 0
+CALL CheckStaffAvailability (1, '2024-09-07 21:59:00', '2024-09-07 22:00:00');
 
+-- 1
 -- Insert a new procedure
-CALL CheckStaffAvailability(4, '2024-09-07 22:10:00', '2024-09-07 22:23:00', @is_avail);
--- SELECT @is_avail;
+CALL CheckStaffAvailability (
+    4,
+    '2024-09-07 22:10:00',
+    '2024-09-07 22:23:00',
+    @is_avail
+);
 
-CALL CheckStaffAvailability(4, NOW(), NOW(), @is_avail);
-SELECT @is_avail;
+SELECT
+    @is_avail;
+
+CALL CheckStaffAvailability (4, NOW (), NOW (), @is_avail);
+
+SELECT
+    @is_avail;
 
 
-update shift set end_hour ='23:59:00' where id=18;
+CALL AddProcedure (31, 1, 'Checkups', 3, 5, NOW (), NOW ());
 
-CALL AddProcedure(31, 1, 'Checkups', 3, 5, NOW(), NOW());
-CALL AddProcedure(31, 41, 'Lab', 50, 1, NOW(), NOW());
-CALL AddProcedure(31, 4, 'Image scans', 50, 1, NOW(), NOW());
-CALL AddProcedure(31, 4, 'Checkups', NULL, NULL, NOW(), NOW());
-CALL AddAdmission(31, 'STANDARD', DATE(NOW()), '2024-09-12');
+CALL AddProcedure (31, 41, 'Lab', 50, 1, NOW (), NOW ());
+
+CALL AddProcedure (31, 4, 'Image scans', 50, 1, NOW (), NOW ());
+
+CALL AddProcedure (31, 4, 'Checkups', NULL, NULL, NOW (), NOW ());
+
+CALL AddAdmission (31, 'STANDARD', DATE (NOW ()), '2024-09-12');
 
 -- Update the treatment history to mark as complete
 UPDATE TreatmentHistory
-SET has_completed = TRUE
-WHERE id = 4;
+SET
+    has_completed = TRUE
+WHERE
+    id = 4;
 
 -- Modify a staff
 UPDATE Staff
-SET job_type = 'Doctor', salary = 170000
-WHERE id = 41;
+SET
+    job_type = 'Doctor',
+    salary = 170000
+WHERE
+    id = 41;
 
 -- Insert a new staff member with qualifications
-CALL AddNewStaffWithQualifications(
-    'Marcel', 
-    'Krupa', 
-    '2001-03-22', 
-    'Nurse', 
-    70000.00, 
-    date(now()), 
-    2,                -- Department ID
-    41,             -- Manager ID
-    'Bachelor of Nursing, Registered Nurse',   -- Qualification names
-    'University of Health, Nursing Board',     -- Qualification providers
-    '2023-05-10, 2024-05-01'                   -- Issue dates for qualifications
+CALL AddNewStaffWithQualifications (
+    'Marcel',
+    'Krupa',
+    '2001-03-22',
+    'Nurse',
+    70000.00,
+    date (now ()),
+    2, -- Department ID
+    41, -- Manager ID
+    'Bachelor of Nursing, Registered Nurse', -- Qualification names
+    'University of Health, Nursing Board', -- Qualification providers
+    '2023-05-10, 2024-05-01' -- Issue dates for qualifications
 );
+
+-- Display all staff members within a department
+-- Call with department name
+CALL ListStaffByDepartment (NULL, 'Cardiology');
+
+-- Call with department ID
+CALL ListStaffByDepartment (1, NULL);
+
+-- List staff ids with comma separated in a department
+SELECT
+	d.id, d.name AS department,
+    GROUP_CONCAT(s.id ORDER BY s.id SEPARATOR ', ') AS members
+FROM
+    Staff s JOIN Department d 
+ON s.department_id = d.id
+GROUP BY
+    d.id, d.name
+ORDER BY
+	d.id;
+
+SELECT
+	d.id,
+    d.name AS department,
+    GROUP_CONCAT(CASE WHEN s.job_type = 'Doctor' THEN s.id END ORDER BY s.id SEPARATOR ', ') AS doctors,
+    GROUP_CONCAT(CASE WHEN s.job_type = 'Nurse' THEN s.id END ORDER BY s.id SEPARATOR ', ') AS nurses
+FROM Staff s JOIN Department d 
+ON s.department_id = d.id
+GROUP BY d.id, d.name
+ORDER BY d.id;
+
+-- List staffs by order of names
+CALL ListStaffNames ('ASC');
+
+CALL ListStaffNames ('DESC');
+
+-- View a staff schedule
+CALL ViewStaffScheduleById(1);
+
+-- View all doctors' schedules
+CALL ViewAllDoctorsSchedule('2024-09-06', '2024-09-13');
+
+-- Book an appointment
+INSERT INTO appointment VALUES (4, '2024-09-08 14:20:00', '2024-09-08 15:00:00', 'Therapy', 'Booked', 31, 5);
+INSERT INTO appointment VALUES (5, '2024-09-08 16:00:00', '2024-09-08 17:00:00', 'Private checkups', 'Booked', 31, 5);
+CALL BookAppointment(21, 5, '2024-09-08 21:35:00', '2024-09-08 21:50:00', 'Consulation');
+CALL BookAppointment(21, 5, '2024-09-08 23:35:00', '2024-09-08 23:38:00', 'Consulation');
+
+-- Cancel an appointment
+CALL CancelAppointment(4);
+
+-- Reports
+-- Get the treatment details: what procedures were done for a patient and with any admission details
+CALL GetTreatmentDetails(2);
+
+-- Get the treatment history with billing details for a patient
+CALL GetPatientTreatmentHistoryWithBilling(1, '2020-01-01', '2024-12-31');
+
+-- Get job changes for a staff member
+CALL GetJobChangeHistory(1);
+
+-- Get staff workload 
+CALL ListProceduresForAllStaff('2024-09-01', '2024-09-10');
+CALL ListProceduresForSpecificStaff(1, '2020-09-01', '2024-09-10');
