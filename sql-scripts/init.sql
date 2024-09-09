@@ -5,23 +5,9 @@
 	A. CREATE DATABASE
 	B. CREATE TABLES (INCLUDING CONSTRAINTS (FK , UNIQUE, DEFAULT, INDEXING, PARTITIONING))
     C. SAMPLE DATA POPULATION
-	D. CREATE STORED PROCEDURES
+	D. CREATE FUNCTIONS
 	E. CREATE TRIGGERS
-    F. CREATE FUNCTIONS
-	G. CREATE VIEWS
-
-NOTE:- 
-	1. Roles for Security:
-    -
-    
-    2. Computed Columns based on a function:
-		- 
-
-	3. Views for Report:
-		- 
-
-	4. Indexes, Stored Procedures, Triggers, Functions:
-		- 
+    F. CREATE STORED PROCEDURES
 
 */
 
