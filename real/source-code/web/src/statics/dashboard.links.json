@@ -1,0 +1,27 @@
+[
+  {
+    "href": "/patients",
+    "image": "/assets/patient-management.webp",
+    "alt": "Patient Management",
+    "label": "Patient Management"
+  },
+  {
+    "href": "/schedule",
+    "image": "/assets/appointment-management.webp",
+    "alt": "Schedule Management",
+    "label": "Schedule Management"
+  },
+
+  {
+    "href": "/staffs",
+    "image": "/assets/staff-management.webp",
+    "alt": "Staff Management",
+    "label": "Staff Management"
+  },
+  {
+    "href": "/report",
+    "image": "/assets/report-management.webp",
+    "alt": "Report Management",
+    "label": "Report Management"
+  }
+]

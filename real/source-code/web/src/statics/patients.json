@@ -1,0 +1,142 @@
+[
+  {
+    "patient_id": 1,
+    "image": "/assets/patients/patient1.webp",
+    "name": "John Doe",
+    "ID": "P001",
+    "gender": "male"
+  },
+  {
+    "patient_id": 2,
+    "image": "/assets/patients/patient2.webp",
+    "name": "Jane Smith",
+    "ID": "P002",
+    "gender": "female"
+  },
+  {
+    "patient_id": 3,
+    "image": "/assets/patients/patient3.webp",
+    "name": "Michael Johnson",
+    "ID": "P003",
+    "gender": "male"
+  },
+  {
+    "patient_id": 4,
+    "image": "/assets/patients/patient4.webp",
+    "name": "Emily Davis",
+    "ID": "P004",
+    "gender": "female"
+  },
+  {
+    "patient_id": 5,
+    "image": "/assets/patients/patient5.webp",
+    "name": "William Brown",
+    "ID": "P005",
+    "gender": "male"
+  },
+  {
+    "patient_id": 6,
+    "image": "/assets/patients/patient6.webp",
+    "name": "Sophia Wilson",
+    "ID": "P006",
+    "gender": "female"
+  },
+  {
+    "patient_id": 7,
+    "image": "/assets/patients/patient7.webp",
+    "name": "James Miller",
+    "ID": "P007",
+    "gender": "male"
+  },
+  {
+    "patient_id": 8,
+    "image": "/assets/patients/patient8.webp",
+    "name": "Isabella Garcia",
+    "ID": "P008",
+    "gender": "female"
+  },
+  {
+    "patient_id": 9,
+    "image": "/assets/patients/patient9.webp",
+    "name": "Benjamin Martinez",
+    "ID": "P009",
+    "gender": "male"
+  },
+  {
+    "patient_id": 10,
+    "image": "/assets/patients/patient10.webp",
+    "name": "Charlotte Anderson",
+    "ID": "P010",
+    "gender": "female"
+  },
+  {
+    "patient_id": 11,
+    "image": "/assets/patients/patient11.webp",
+    "name": "Oliver Thomas",
+    "ID": "P011",
+    "gender": "male"
+  },
+  {
+    "patient_id": 12,
+    "image": "/assets/patients/patient12.webp",
+    "name": "Ava Taylor",
+    "ID": "P012",
+    "gender": "female"
+  },
+  {
+    "patient_id": 13,
+    "image": "/assets/patients/patient13.webp",
+    "name": "Lucas Moore",
+    "ID": "P013",
+    "gender": "male"
+  },
+  {
+    "patient_id": 14,
+    "image": "/assets/patients/patient14.webp",
+    "name": "Mia Jackson",
+    "ID": "P014",
+    "gender": "female"
+  },
+  {
+    "patient_id": 15,
+    "image": "/assets/patients/patient15.webp",
+    "name": "Elijah Lee",
+    "ID": "P015",
+    "gender": "male"
+  },
+  {
+    "patient_id": 16,
+    "image": "/assets/patients/patient16.webp",
+    "name": "Amelia Harris",
+    "ID": "P016",
+    "gender": "female"
+  },
+  {
+    "patient_id": 17,
+    "image": "/assets/patients/patient17.webp",
+    "name": "Ethan Clark",
+    "ID": "P017",
+    "gender": "male"
+  },
+  {
+    "patient_id": 18,
+    "image": "/assets/patients/patient18.webp",
+    "name": "Abigail Lewis",
+    "ID": "P018",
+    "gender": "female"
+  },
+  {
+    "patient_id": 19,
+    "image": "/assets/patients/patient19.webp",
+    "name": "Alexander Walker",
+    "ID": "P019",
+    "gender": "male"
+  },
+  {
+    "patient_id": 20,
+    "image": "/assets/patients/patient20.webp",
+    "name": "Ella Hall",
+    "ID": "P020",
+    "gender": "female"
+  }
+]
